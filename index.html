@@ -478,20 +478,73 @@ async function fetchCrypto(ids) {
   return ok;
 }
 
+async function fetchCommodityHistory(id) {
+  const meta = COMMODITY_MAP[id] || {};
+  const attempts = [];
+
+  // 1) CryptoCompare histoday cho metals (XAU, XAG, XPT)
+  if (meta.cc) {
+    for (const sym of [...new Set([meta.cc, 'PLAT', 'XPT', 'XAU', 'XAG'].filter(s => meta.cc === s || meta.cc === 'XPT'))]) {
+      attempts.push((async () => {
+        const r = await fetchWithTimeout(`https://min-api.cryptocompare.com/data/v2/histoday?fsym=${meta.cc}&tsym=USD&limit=8`);
+        if (!r.ok) throw new Error('fail');
+        const d = await r.json();
+        const arr = d?.Data?.Data?.map(x=>x.close).filter(v=>v>0);
+        if (!arr || arr.length < 2) throw new Error('no data');
+        return arr;
+      })());
+    }
+  }
+
+  // 2) Stooq daily CSV qua proxy — format: Date,Open,High,Low,Close,Volume
+  if (meta.stooq) {
+    const stooqUrl = `https://stooq.com/q/d/l/?s=${meta.stooq}&i=d`;
+    for (const proxy of [
+      `https://corsproxy.io/?${encodeURIComponent(stooqUrl)}`,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(stooqUrl)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(stooqUrl)}`,
+    ]) {
+      attempts.push((async () => {
+        const r = await fetchWithTimeout(proxy);
+        if (!r.ok) throw new Error('fail');
+        const text = await r.text();
+        if (!text || text.includes('No data') || text.trim().split('\n').length < 3) throw new Error('no data');
+        const lines = text.trim().split('\n').slice(1); // bỏ header
+        const closes = lines
+          .slice(-10) // 10 ngày gần nhất
+          .map(l => { const cols = l.split(','); return parseFloat(cols[4]); }) // cột 4 = Close
+          .filter(v => !isNaN(v) && v > 0);
+        if (closes.length < 2) throw new Error('no data');
+        return closes;
+      })());
+    }
+  }
+
+  // 3) Yahoo futures (fallback — hay bị CORS nhưng thử)
+  const yahooFutMap = { 'XAUUSD':'GC=F','XAGUSD':'SI=F','USOIL':'CL=F','NATGAS':'NG=F','XPTUSD':'PL=F','XCUUSD':'HG=F','WHEAT':'ZW=F','COFFEE':'KC=F' };
+  const yfSym = yahooFutMap[id];
+  if (yfSym) {
+    attempts.push((async () => {
+      const v = await fetchYahoo(yfSym);
+      if (!v.history || v.history.length < 2) throw new Error('no history');
+      return v.history;
+    })());
+  }
+
+  if (!attempts.length) return [];
+  try { return await Promise.any(attempts); }
+  catch(_) { return []; }
+}
+
 async function fetchCryptoHistory(id) {
-  // CoinGecko
   try {
     const data = await tryFetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=7&interval=daily`);
     if (data?.prices) return data.prices.map(x=>x[1]);
   } catch(_) {}
-  // CryptoCompare daily
   try {
     const sym = CRYPTO_SYMBOLS[id]?.cc || id.toUpperCase();
-    const r = await fetch(`https://min-api.cryptocompare.com/data/v2/histoday?fsym=${sym}&tsym=USD&limit=7`);
-    if (r.ok) {
-      const d = await r.json();
-      if (d?.Data?.Data) return d.Data.Data.map(x=>x.close);
-    }
+    const r = await fetchWithTimeout(`https://min-api.cryptocompare.com/data/v2/histoday?fsym=${sym}&tsym=USD&limit=7`);
+    if (r.ok) { const d = await r.json(); if (d?.Data?.Data) return d.Data.Data.map(x=>x.close); }
   } catch(_) {}
   return [];
 }
@@ -506,20 +559,27 @@ async function fetchCommodity(id) {
   const meta = COMMODITY_MAP[id] || {};
   const attempts = [];
 
-  // 1) Stooq CSV qua corsproxy (real-time, no API key)
+  // 1) Stooq CSV qua proxy — lấy 2 ngày để tính % đúng
   if (meta.stooq) {
     attempts.push((async () => {
-      const url = `https://stooq.com/q/l/?s=${meta.stooq}&f=sd2t2ohlcv&h&e=csv`;
-      const r = await fetchWithTimeout(`https://corsproxy.io/?${encodeURIComponent(url)}`);
+      const url = `https://stooq.com/q/d/l/?s=${meta.stooq}&i=d`;
+      const proxies = [
+        `https://corsproxy.io/?${encodeURIComponent(url)}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      ];
+      const r = await Promise.any(proxies.map(p => fetchWithTimeout(p)));
       if (!r.ok) throw new Error('fail');
       const text = await r.text();
-      const lines = text.trim().split('\n');
-      if (lines.length < 2) throw new Error('no data');
-      const cols = lines[1].split(',');
-      const close = parseFloat(cols[5]);
-      const open  = parseFloat(cols[2]);
+      const lines = text.trim().split('\n').slice(1).slice(-2); // 2 ngày gần nhất
+      if (lines.length < 1) throw new Error('no data');
+      // Format: Date,Open,High,Low,Close,Volume
+      const today = lines[lines.length-1].split(',');
+      const close = parseFloat(today[4]);
       if (!close || isNaN(close)) throw new Error('bad price');
-      return { id, current_price: close, price_change_percentage_24h: open ? (close-open)/open*100 : null };
+      // prev close = close của ngày hôm qua (không dùng open)
+      const prev = lines.length >= 2 ? parseFloat(lines[lines.length-2].split(',')[4]) : null;
+      const pct = prev && prev > 0 ? (close - prev) / prev * 100 : null;
+      return { id, current_price: close, price_change_percentage_24h: pct };
     })());
   }
 
@@ -795,37 +855,8 @@ async function loadAll() {
         const h = await fetchCryptoHistory(a.id);
         if (h.length > 1) a.history = h;
       } else if (a.type === 'commodity') {
-        const meta = COMMODITY_MAP[a.id] || {};
-        // 1) CryptoCompare (metals XAU, XAG, XPT/PLAT)
-        if (meta.cc) {
-          // Thử cả 2 symbol có thể có
-          const syms = [meta.cc, meta.cc==='XPT'?'PLAT':null].filter(Boolean);
-          for (const sym of syms) {
-            try {
-              const r = await fetchWithTimeout(`https://min-api.cryptocompare.com/data/v2/histoday?fsym=${sym}&tsym=USD&limit=8`);
-              if (r.ok) {
-                const d = await r.json();
-                if (d?.Data?.Data?.length > 1) { a.history = d.Data.Data.map(x=>x.close).filter(v=>v>0); if (a.history.length>1) return; }
-              }
-            } catch(_) {}
-          }
-        }
-        // 2) Stooq daily history qua 2 proxy song song
-        if (meta.stooq) {
-          try {
-            const url = `https://stooq.com/q/d/l/?s=${meta.stooq}&i=d`;
-            const proxied = await Promise.any([
-              fetchWithTimeout(`https://corsproxy.io/?${encodeURIComponent(url)}`),
-              fetchWithTimeout(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`),
-            ]);
-            if (proxied.ok) {
-              const text = await proxied.text();
-              const lines = text.trim().split('\n').slice(1).slice(-9);
-              const closes = lines.map(l => parseFloat(l.split(',')[4])).filter(v => !isNaN(v) && v > 0);
-              if (closes.length > 1) a.history = closes;
-            }
-          } catch(_) {}
-        }
+        const h = await fetchCommodityHistory(a.id);
+        if (h.length > 1) a.history = h;
       }
     } catch(_) {}
   }));
@@ -983,16 +1014,9 @@ async function fetchSingleAsset(i) {
       a.price = c.current_price; a.pct = c.price_change_percentage_24h;
       a.history = hist;
     } else if (a.type==='commodity') {
-      const c = await fetchCommodity(a.id);
+      const [c, h] = await Promise.all([fetchCommodity(a.id), fetchCommodityHistory(a.id)]);
       a.price = c.current_price; a.pct = c.price_change_percentage_24h;
-      // history từ CryptoCompare nếu có
-      const meta = COMMODITY_MAP[a.id]||{};
-      if (meta.cc) {
-        try {
-          const r = await fetchWithTimeout(`https://min-api.cryptocompare.com/data/v2/histoday?fsym=${meta.cc}&tsym=USD&limit=7`);
-          if (r.ok) { const d=await r.json(); if(d?.Data?.Data) a.history=d.Data.Data.map(x=>x.close); }
-        } catch(_) {}
-      }
+      if (h.length > 1) a.history = h;
     } else {
       const v = await fetchYahoo(a.id);
       a.price=v.price; a.pct=v.pct; a.history=v.history||[];
