@@ -84,6 +84,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 .hval.ok{color:var(--gr);}
 .hval-alloc{font-size:10px;font-family:var(--mono);color:var(--mu);margin-top:3px;}
 .manual-price-row{display:flex;gap:6px;margin:6px 0 4px;align-items:center;}
+.extra-field{margin-top:8px;padding:8px 12px;background:var(--sur2);border-radius:8px;border:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.extra-field-label{font-size:10px;color:var(--mu);font-family:var(--mono);white-space:nowrap;}
+.einput{width:68px;background:transparent;border:none;border-bottom:1px solid var(--b2);font-size:13px;font-weight:600;font-family:var(--mono);color:var(--tx);outline:none;text-align:right;padding:2px 4px;}
+.einput:focus{border-bottom-color:var(--blue);}
 
 /* ── ADD ASSET BUTTON ── */
 .add-row{margin-bottom:1.5rem;}
@@ -238,14 +242,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 
   <div class="header">
     <div>
-      <div class="logo">DANH MỤC ĐẦU TƯ</div>
-      <div class="ttl">Tài sản của tôi</div>
+      <div class="logo" data-i18n="logo">DANH MỤC ĐẦU TƯ</div>
+      <div class="ttl" data-i18n="title">Tài sản của tôi</div>
     </div>
     <div class="hright">
       <div class="live"><span class="dot"></span>LIVE</div>
+      <button class="btn" id="lang-btn" onclick="toggleLang()" style="font-size:13px;padding:5px 10px;letter-spacing:.5px;">🇬🇧 EN</button>
       <button class="btn" id="rbtn" onclick="loadAll()">
         <svg id="rico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        Làm mới
+        <span data-i18n="refresh">Làm mới</span>
       </button>
     </div>
   </div>
@@ -253,9 +258,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
   <!-- TỔNG DANH MỤC -->
   <div class="smry">
     <div class="sc-total">
-      <div class="sl">TỔNG DANH MỤC (USD)</div>
+      <div class="sl" data-i18n="totalPortfolio">TỔNG DANH MỤC (USD)</div>
       <div class="sv" id="s0"><span class="sk" style="width:180px;height:44px;"></span></div>
-      <div class="ss" id="s0c">theo khối lượng nhập</div>
+      <div class="ss" id="s0c" data-i18n="byQty">theo khối lượng nhập</div>
       <div class="alloc-bar" id="alloc-bar"></div>
       <div class="alloc-labels" id="alloc-labels"></div>
     </div>
@@ -273,24 +278,24 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
   <div class="add-row">
     <button class="btn btn-add" onclick="openModal()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Thêm tài sản
+      <span data-i18n="addAsset">Thêm tài sản</span>
     </button>
   </div>
 
   <!-- CHART -->
   <div class="csec">
     <div class="chdr">
-      <span class="ctit">BIẾN ĐỘNG 7 NGÀY (chỉ số hóa, ngày đầu = 100)</span>
+      <span class="ctit" data-i18n="chart7d">BIẾN ĐỘNG 7 NGÀY (chỉ số hóa, ngày đầu = 100)</span>
       <div class="leg" id="chart-legend"></div>
     </div>
     <div class="cw"><canvas id="ch"></canvas></div>
   </div>
 
   <div class="foot">
-    <span class="fsrc">Nguồn: CoinGecko · Yahoo Finance · <span id="ut">đang tải...</span></span>
+    <span class="fsrc"><span data-i18n="source">Nguồn</span>: CoinGecko · Yahoo Finance · <span id="ut" data-i18n="loading">đang tải...</span></span>
     <button class="btn" onclick="loadAll()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-      Làm mới
+      <span data-i18n="refresh">Làm mới</span>
     </button>
   </div>
   <div id="msgs"></div>
@@ -298,9 +303,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
   <!-- ── DỰ BÁO TĂNG TRƯỞNG ── -->
   <div class="csec" style="margin-top:1.5rem;" id="forecast-section">
     <div class="chdr" style="margin-bottom:16px;">
-      <span class="ctit">DỰ BÁO TĂNG TRƯỞNG 10 NĂM</span>
+      <span class="ctit" data-i18n="forecastTitle">DỰ BÁO TĂNG TRƯỞNG 10 NĂM</span>
       <button class="btn" onclick="syncFromPortfolio()" style="font-size:11px;padding:5px 12px;color:var(--gr);border-color:rgba(52,211,153,0.3);">
-        ↺ Đồng bộ từ danh mục
+        ↺ <span data-i18n="syncPortfolio">Đồng bộ từ danh mục</span>
       </button>
     </div>
 
@@ -310,7 +315,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
     <!-- Thông số -->
     <div class="fc-params-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
       <div class="hfield" style="padding:14px 16px;">
-        <div class="sl" style="margin-bottom:8px;">VỐN BAN ĐẦU (USD)</div>
+        <div class="sl" style="margin-bottom:8px;" data-i18n="initCapital">VỐN BAN ĐẦU (USD)</div>
         <div class="hinput-wrap">
           <input class="hinput" type="text" id="fc-init" value="30,000"
             placeholder="30,000" oninput="fcInputInit(this)"
@@ -319,7 +324,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
         </div>
       </div>
       <div class="hfield" style="padding:14px 16px;">
-        <div class="sl" style="margin-bottom:8px;">DCA / THÁNG (USD)</div>
+        <div class="sl" style="margin-bottom:8px;" data-i18n="dcaMonth">DCA / THÁNG (USD)</div>
         <div class="hinput-wrap">
           <input class="hinput" type="text" id="fc-dca" value="0"
             placeholder="0" oninput="fcInputDCA(this)"
@@ -345,7 +350,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
       </table>
     </div>
 
-    <div style="margin-top:12px;padding:10px 14px;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);border-radius:10px;font-size:11px;color:#f87171;line-height:1.6;">
+    <div style="margin-top:12px;padding:10px 14px;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);border-radius:10px;font-size:11px;color:#f87171;line-height:1.6;" data-i18n="disclaimer">
       ⚠ Đây là mô phỏng dựa trên lãi suất giả định — không phải dự báo thực tế. Crypto và hàng hóa có biến động cực cao, kịch bản thực tế có thể khác đáng kể.
     </div>
   </div>
@@ -359,19 +364,66 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 
     <div class="modal-tabs">
       <button class="mtab active" onclick="setTab('crypto')">🪙 Crypto</button>
-      <button class="mtab" onclick="setTab('stock')">📈 Cổ phiếu / ETF</button>
+      <button class="mtab" onclick="setTab('stock')">📈 Cổ phiếu</button>
       <button class="mtab" onclick="setTab('commodity')">🏅 Hàng hóa</button>
+      <button class="mtab" onclick="setTab('cash')">💵 Tiền mặt</button>
+      <button class="mtab" onclick="setTab('realestate')">🏠 Bất động sản</button>
       <button class="mtab" onclick="setTab('custom')">✏️ Tùy chỉnh</button>
     </div>
 
-    <div id="tab-crypto">
-      <div class="asset-grid" id="crypto-grid"></div>
+    <div id="tab-crypto"><div class="asset-grid" id="crypto-grid"></div></div>
+    <div id="tab-stock" style="display:none"><div class="asset-grid" id="stock-grid"></div></div>
+    <div id="tab-commodity" style="display:none"><div class="asset-grid" id="commodity-grid"></div></div>
+
+    <!-- TAB TIỀN MẶT -->
+    <div id="tab-cash" style="display:none">
+      <div class="modal-label">TÊN GỌI</div>
+      <input class="modal-input" id="cash-name" placeholder="Ví dụ: Tiết kiệm VPBank" maxlength="40" value="Tiền mặt / Tiết kiệm">
+      <div class="modal-label">TIỀN TỆ</div>
+      <select class="modal-input" id="cash-currency" style="cursor:pointer">
+        <option value="USD">USD – Đô la Mỹ</option>
+        <option value="VND">VND – Việt Nam đồng</option>
+        <option value="EUR">EUR – Euro</option>
+        <option value="SGD">SGD – Đô la Singapore</option>
+        <option value="JPY">JPY – Yên Nhật</option>
+      </select>
+      <div class="modal-label">LÃI SUẤT TIẾT KIỆM (%/NĂM)</div>
+      <div style="position:relative;">
+        <input class="modal-input" id="cash-rate" type="number" min="0" max="30" step="0.1" value="5.5" placeholder="5.5" style="padding-right:52px;">
+        <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--mu);font-family:var(--mono);">%/năm</span>
+      </div>
+      <div class="modal-hint">Nhập lãi suất ngân hàng/tiết kiệm. Dùng để tính tăng trưởng trong phần Dự báo.</div>
     </div>
-    <div id="tab-stock" style="display:none">
-      <div class="asset-grid" id="stock-grid"></div>
-    </div>
-    <div id="tab-commodity" style="display:none">
-      <div class="asset-grid" id="commodity-grid"></div>
+
+    <!-- TAB BẤT ĐỘNG SẢN -->
+    <div id="tab-realestate" style="display:none">
+      <div class="modal-label">TÊN TÀI SẢN</div>
+      <input class="modal-input" id="re-name" placeholder="Ví dụ: Căn hộ Quận 7" maxlength="40" value="Bất động sản">
+      <div class="modal-label">KHU VỰC</div>
+      <select class="modal-input" id="re-location" onchange="updateReGrowthHint()" style="cursor:pointer">
+        <optgroup label="🇻🇳 Việt Nam">
+          <option value="vn-hcm">TP. Hồ Chí Minh (~12%/năm)</option>
+          <option value="vn-hn">Hà Nội (~10%/năm)</option>
+          <option value="vn-dn">Đà Nẵng (~8%/năm)</option>
+          <option value="vn-other">Tỉnh thành khác (~6%/năm)</option>
+        </optgroup>
+        <optgroup label="🌏 Quốc tế">
+          <option value="sg">Singapore (~6%/năm)</option>
+          <option value="us">Mỹ trung bình (~5%/năm)</option>
+          <option value="au">Úc (~7%/năm)</option>
+          <option value="jp">Nhật Bản (~3%/năm)</option>
+          <option value="uk">Anh (~5%/năm)</option>
+        </optgroup>
+      </select>
+      <div id="re-hint" style="margin:-8px 0 12px;padding:8px 12px;background:rgba(251,146,60,0.07);border-radius:8px;border-left:3px solid #fb923c;font-size:11px;color:#fb923c;font-family:var(--mono);">
+        📊 Tăng trưởng ước tính: <strong id="re-hint-val">~12%/năm</strong> (lịch sử TP.HCM)
+      </div>
+      <div class="modal-label">HOẶC TỰ NHẬP % TĂNG TRƯỞNG</div>
+      <div style="position:relative;">
+        <input class="modal-input" id="re-custom-rate" type="number" min="0" max="50" step="0.5" placeholder="Để trống = dùng ước tính khu vực" style="padding-right:52px;">
+        <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--mu);font-family:var(--mono);">%/năm</span>
+      </div>
+      <div class="modal-hint">Nhập giá trị BĐS thủ công (USD). Tăng trưởng theo khu vực dùng cho phần Dự báo.</div>
     </div>
     <div id="tab-custom" style="display:none">
       <div class="modal-label">TÊN HIỂN THỊ</div>
@@ -399,6 +451,251 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 </div>
 
 <script>
+// ─────────────────────────────────────────────────────────────
+//  I18N ENGINE
+// ─────────────────────────────────────────────────────────────
+const LANG = {
+  vi: {
+    logo:'DANH MỤC ĐẦU TƯ', title:'Tài sản của tôi',
+    refresh:'Làm mới', addAsset:'Thêm tài sản',
+    totalPortfolio:'TỔNG DANH MỤC (USD)', byQty:'theo khối lượng nhập',
+    chart7d:'BIẾN ĐỘNG 7 NGÀY (chỉ số hóa, ngày đầu = 100)',
+    source:'Nguồn', loading:'đang tải...', updatedAt:'cập nhật',
+    forecastTitle:'DỰ BÁO TĂNG TRƯỞNG 10 NĂM',
+    syncPortfolio:'Đồng bộ từ danh mục',
+    initCapital:'VỐN BAN ĐẦU (USD)', dcaMonth:'DCA / THÁNG (USD)',
+    disclaimer:'⚠ Đây là mô phỏng dựa trên lãi suất giả định — không phải dự báo thực tế. Crypto và hàng hóa có biến động cực cao, kịch bản thực tế có thể khác đáng kể.',
+    // Modal
+    modalTitle:'Thêm tài sản', modalSub:'Chọn loại và tài sản muốn theo dõi',
+    tabCrypto:'🪙 Crypto', tabStock:'📈 Cổ phiếu', tabCommodity:'🏅 Hàng hóa',
+    tabCash:'💵 Tiền mặt', tabRE:'🏠 Bất động sản', tabCustom:'✏️ Tùy chỉnh',
+    cashLabel:'TÊN GỌI', cashCurrency:'TIỀN TỆ', cashRate:'LÃI SUẤT TIẾT KIỆM (%/NĂM)',
+    cashHint:'Nhập lãi suất ngân hàng/tiết kiệm. Dùng để tính tăng trưởng trong phần Dự báo.',
+    cashPlaceholder:'Ví dụ: Tiết kiệm VPBank', cashDefault:'Tiền mặt / Tiết kiệm',
+    reName:'TÊN TÀI SẢN', reLocation:'KHU VỰC', reCustomRate:'HOẶC TỰ NHẬP % TĂNG TRƯỞNG',
+    reHintPrefix:'📊 Tăng trưởng ước tính:', reHintSuffix:'lịch sử TP.HCM',
+    reHint:'Nhập giá trị BĐS thủ công (USD). Tăng trưởng theo khu vực dùng cho phần Dự báo.',
+    rePlaceholder:'Ví dụ: Căn hộ Quận 7', reDefault:'Bất động sản',
+    reCustomPlaceholder:'Để trống = dùng ước tính khu vực',
+    customName:'TÊN HIỂN THỊ', customTicker:'MÃ TICKER / ID',
+    customHint:'Crypto: nhập CoinGecko ID (vd: bitcoin, ethereum). Cổ phiếu/ETF: Yahoo ticker (vd: AAPL, VUAA.L)',
+    customType:'LOẠI', customIcon:'ICON (emoji)', customColor:'MÀU',
+    optCrypto:'Crypto (CoinGecko)', optStock:'Cổ phiếu / ETF (Yahoo Finance)',
+    btnCancel:'Huỷ', btnAdd:'Thêm vào danh mục',
+    // Dynamic strings
+    enterQty:'nhập khối lượng', enterValue:'nhập giá trị', loading2:'đang tải...',
+    noPrice:'Không tải được giá tự động', manualPrice:'Nhập giá thủ công', retry:'↻',
+    perYear:'/năm', savingsRate:'Lãi suất/năm', growthRate:'Tăng trưởng/năm',
+    perYearShort:'%/năm',
+    currUSD:'USD – Đô la Mỹ', currVND:'VND – Đồng Việt Nam', currEUR:'EUR – Euro',
+    currSGD:'SGD – Đô la Singapore', currJPY:'JPY – Yên Nhật',
+    reHintText:'Tăng trưởng ước tính:', reHintSuffix:'lịch sử TP.HCM',
+    portAlloc:'% danh mục',
+    // Forecast
+    fcYearLabel:'Năm', fcCapAccum:'Vốn tích lũy', fcTotal:'Tổng', fcProfit:'Lãi', fcMultiple:'×lần',
+    fcTotalAfter:'Tổng sau', fcYears:'năm', fcNetProfit:'Lãi ròng',
+    fcCAGR:'CAGR danh mục', fcMultipleInv:'×lần vốn đầu tư',
+    fcCashNote:'Thay đổi trong card bên dưới', fcRENote:'Thay đổi trong card bên dưới',
+    fcCashLabel:'Lãi kép:', fcRELabel:'Tăng giá:',
+    // Summary
+    assetValue:'GIÁ TRỊ',
+    // Errors
+    errNoAsset:'Vui lòng chọn một tài sản', errDuplicate:'Tài sản này đã có trong danh mục', errMissingFields:'Vui lòng nhập tên và mã ticker',
+    noAssets:'Chưa có tài sản nào trong danh mục.',
+    // Locations
+    locVnHcm:'TP. Hồ Chí Minh (~12%/năm)', locVnHn:'Hà Nội (~10%/năm)',
+    locVnDn:'Đà Nẵng (~8%/năm)', locVnOther:'Tỉnh thành khác (~6%/năm)',
+    locSg:'Singapore (~6%/năm)', locUs:'Mỹ trung bình (~5%/năm)',
+    locAu:'Úc (~7%/năm)', locJp:'Nhật Bản (~3%/năm)', locUk:'Anh (~5%/năm)',
+    locGroupVn:'🇻🇳 Việt Nam', locGroupIntl:'🌏 Quốc tế',
+    today:'hôm nay',
+  },
+  en: {
+    logo:'MY PORTFOLIO', title:'My Assets',
+    refresh:'Refresh', addAsset:'Add Asset',
+    totalPortfolio:'TOTAL PORTFOLIO (USD)', byQty:'enter quantities below',
+    chart7d:'7-DAY PERFORMANCE (indexed, day 1 = 100)',
+    source:'Source', loading:'loading...', updatedAt:'updated',
+    forecastTitle:'10-YEAR GROWTH FORECAST',
+    syncPortfolio:'Sync from Portfolio',
+    initCapital:'INITIAL CAPITAL (USD)', dcaMonth:'DCA / MONTH (USD)',
+    disclaimer:'⚠ This is a simulation based on assumed rates — not a real forecast. Crypto and commodities are highly volatile; actual results may differ significantly.',
+    // Modal
+    modalTitle:'Add Asset', modalSub:'Select the type and asset to track',
+    tabCrypto:'🪙 Crypto', tabStock:'📈 Stocks', tabCommodity:'🏅 Commodities',
+    tabCash:'💵 Cash', tabRE:'🏠 Real Estate', tabCustom:'✏️ Custom',
+    cashLabel:'LABEL', cashCurrency:'CURRENCY', cashRate:'SAVINGS RATE (%/YEAR)',
+    cashHint:'Enter your bank/savings interest rate. Used to calculate growth in the Forecast.',
+    cashPlaceholder:'e.g. Chase Savings', cashDefault:'Cash / Savings',
+    reName:'ASSET NAME', reLocation:'REGION', reCustomRate:'OR ENTER CUSTOM GROWTH %',
+    reHintPrefix:'📊 Estimated growth:', reHintSuffix:'historical HCMC',
+    reHint:'Enter the property value manually (USD). Region growth rate is used for Forecast.',
+    rePlaceholder:'e.g. Downtown Apartment', reDefault:'Real Estate',
+    reCustomPlaceholder:'Leave blank = use region estimate',
+    customName:'DISPLAY NAME', customTicker:'TICKER / ID',
+    customHint:'Crypto: enter CoinGecko ID (e.g. bitcoin, ethereum). Stocks/ETF: Yahoo ticker (e.g. AAPL, VUAA.L)',
+    customType:'TYPE', customIcon:'ICON (emoji)', customColor:'COLOR',
+    optCrypto:'Crypto (CoinGecko)', optStock:'Stock / ETF (Yahoo Finance)',
+    btnCancel:'Cancel', btnAdd:'Add to Portfolio',
+    // Dynamic
+    enterQty:'enter quantity', enterValue:'enter value', loading2:'loading...',
+    noPrice:'Could not load price automatically', manualPrice:'Enter price manually', retry:'↻',
+    perYear:'/yr', savingsRate:'Interest rate/yr', growthRate:'Growth rate/yr',
+    perYearShort:'%/yr',
+    currUSD:'USD – US Dollar', currVND:'VND – Vietnamese Dong', currEUR:'EUR – Euro',
+    currSGD:'SGD – Singapore Dollar', currJPY:'JPY – Japanese Yen',
+    reHintText:'Estimated growth:', reHintSuffix:'historical HCMC',
+    portAlloc:'% of portfolio',
+    // Forecast
+    fcYearLabel:'Year', fcCapAccum:'Capital Invested', fcTotal:'Total', fcProfit:'Profit', fcMultiple:'×',
+    fcTotalAfter:'Total after', fcYears:'years', fcNetProfit:'Net Profit',
+    fcCAGR:'Portfolio CAGR', fcMultipleInv:'× invested capital',
+    fcCashNote:'Edit in the card below', fcRENote:'Edit in the card below',
+    fcCashLabel:'Compound:', fcRELabel:'Appreciation:',
+    // Summary
+    assetValue:'VALUE',
+    // Errors
+    errNoAsset:'Please select an asset', errDuplicate:'This asset is already in your portfolio', errMissingFields:'Please enter a name and ticker',
+    noAssets:'No assets in portfolio yet.',
+    // Locations
+    locVnHcm:'Ho Chi Minh City (~12%/yr)', locVnHn:'Hanoi (~10%/yr)',
+    locVnDn:'Da Nang (~8%/yr)', locVnOther:'Other Vietnam (~6%/yr)',
+    locSg:'Singapore (~6%/yr)', locUs:'USA average (~5%/yr)',
+    locAu:'Australia (~7%/yr)', locJp:'Japan (~3%/yr)', locUk:'UK (~5%/yr)',
+    locGroupVn:'🇻🇳 Vietnam', locGroupIntl:'🌏 International',
+    today:'today',
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'vi';
+const t = key => LANG[currentLang][key] || LANG.vi[key] || key;
+
+function applyLang() {
+  // Static elements với data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (LANG[currentLang][key] !== undefined) el.textContent = LANG[currentLang][key];
+  });
+  // Modal tabs
+  const tabs = document.querySelectorAll('.mtab');
+  const tabKeys = ['tabCrypto','tabStock','tabCommodity','tabCash','tabRE','tabCustom'];
+  tabs.forEach((btn,i) => { if(tabKeys[i]) btn.textContent = t(tabKeys[i]); });
+  // Modal labels/placeholders
+  const setLbl = (id,key) => { const el=document.getElementById(id); if(el) el.textContent=t(key); };
+  const setPlh = (id,key) => { const el=document.getElementById(id); if(el) el.placeholder=t(key); };
+  const setVal = (id,key) => { const el=document.getElementById(id); if(el&&el.type!=='text'&&el.tagName!=='SELECT') el.value=t(key); };
+  // Modal h3/sub
+  const mh3 = document.querySelector('.modal h3'); if(mh3) mh3.textContent = t('modalTitle');
+  const msub = document.querySelector('.modal-sub'); if(msub) msub.textContent = t('modalSub');
+  // Modal buttons
+  const btns = document.querySelectorAll('.mbtn');
+  if(btns[0]) btns[0].textContent = t('btnCancel');
+  if(btns[1]) btns[1].textContent = t('btnAdd');
+  // Cash tab inputs
+  setPlh('cash-name', 'cashPlaceholder');
+  // RE tab inputs
+  setPlh('re-name', 'rePlaceholder');
+  setPlh('re-custom-rate', 'reCustomPlaceholder');
+  // Custom tab inputs
+  setPlh('ci-name', 'customName');
+  // Re-render select options for re-location
+  const reLoc = document.getElementById('re-location');
+  if (reLoc) {
+    reLoc.innerHTML = `
+      <optgroup label="${t('locGroupVn')}">
+        <option value="vn-hcm">${t('locVnHcm')}</option>
+        <option value="vn-hn">${t('locVnHn')}</option>
+        <option value="vn-dn">${t('locVnDn')}</option>
+        <option value="vn-other">${t('locVnOther')}</option>
+      </optgroup>
+      <optgroup label="${t('locGroupIntl')}">
+        <option value="sg">${t('locSg')}</option>
+        <option value="us">${t('locUs')}</option>
+        <option value="au">${t('locAu')}</option>
+        <option value="jp">${t('locJp')}</option>
+        <option value="uk">${t('locUk')}</option>
+      </optgroup>`;
+  }
+  // Modal labels (dynamic)
+  document.querySelectorAll('.modal-label').forEach(el => {
+    const txt = el.textContent.trim();
+    const map = {
+      'TÊN GỌI':t('cashLabel'),'LABEL':t('cashLabel'),
+      'TIỀN TỆ':t('cashCurrency'),'CURRENCY':t('cashCurrency'),
+      'LÃI SUẤT TIẾT KIỆM (%/NĂM)':t('cashRate'),'SAVINGS RATE (%/YEAR)':t('cashRate'),
+      'TÊN TÀI SẢN':t('reName'),'ASSET NAME':t('reName'),
+      'KHU VỰC':t('reLocation'),'REGION':t('reLocation'),
+      'HOẶC TỰ NHẬP % TĂNG TRƯỞNG':t('reCustomRate'),'OR ENTER CUSTOM GROWTH %':t('reCustomRate'),
+      'TÊN HIỂN THỊ':t('customName'),'DISPLAY NAME':t('customName'),
+      'MÃ TICKER / ID':t('customTicker'),'TICKER / ID':t('customTicker'),
+      'LOẠI':t('customType'),'TYPE':t('customType'),
+      'ICON (emoji)':t('customIcon'), 'MÀU':t('customColor'),'COLOR':t('customColor'),
+    };
+    if (map[txt]) el.textContent = map[txt];
+  });
+  // Modal hints
+  document.querySelectorAll('.modal-hint').forEach(el => {
+    const txt = el.textContent.trim();
+    if (txt.startsWith('Nhập lãi suất') || txt.startsWith('Enter your bank')) el.textContent = t('cashHint');
+    if (txt.startsWith('Nhập giá trị BĐS') || txt.startsWith('Enter the property')) el.textContent = t('reHint');
+    if (txt.startsWith('Crypto: nhập') || txt.startsWith('Crypto: enter')) el.textContent = t('customHint');
+  });
+  // Currency options
+  const cashCur = document.getElementById('cash-currency');
+  if (cashCur) cashCur.innerHTML = `
+    <option value="USD">${t('currUSD')}</option>
+    <option value="VND">${t('currVND')}</option>
+    <option value="EUR">${t('currEUR')}</option>
+    <option value="SGD">${t('currSGD')}</option>
+    <option value="JPY">${t('currJPY')}</option>`;
+
+  // Default values cho cash/RE name inputs (chỉ set nếu chưa user sửa)
+  const cashNameEl = document.getElementById('cash-name');
+  if (cashNameEl && (cashNameEl.value === t('cashDefault') || cashNameEl.value === LANG[currentLang==='vi'?'en':'vi'].cashDefault || cashNameEl.value === '')) {
+    cashNameEl.value = t('cashDefault');
+  }
+  const reNameEl = document.getElementById('re-name');
+  if (reNameEl && (reNameEl.value === t('reDefault') || reNameEl.value === LANG[currentLang==='vi'?'en':'vi'].reDefault || reNameEl.value === '')) {
+    reNameEl.value = t('reDefault');
+  }
+
+  // %/năm → %/yr labels trong modal
+  document.querySelectorAll('.modal [style*="right:14px"]').forEach(el => {
+    if (el.textContent.includes('%')) el.textContent = t('perYearShort');
+  });
+
+  // RE hint text
+  const reHintEl = document.getElementById('re-hint');
+  if (reHintEl) {
+    const loc = document.getElementById('re-location')?.value || 'vn-hcm';
+    const g = RE_GROWTH[loc] || RE_GROWTH['vn-hcm'];
+    reHintEl.innerHTML = `📊 ${t('reHintText')} <strong id="re-hint-val">~${(g.r*100).toFixed(0)}%${t('perYearShort')}</strong>`;
+  }
+  // Custom type select options
+  const ciType = document.getElementById('ci-type');
+  if (ciType) {
+    ciType.options[0].text = t('optCrypto');
+    ciType.options[1].text = t('optStock');
+  }
+  const lb = document.getElementById('lang-btn');
+  if (lb) lb.textContent = currentLang==='vi' ? '🇬🇧 EN' : '🇻🇳 VI';
+  // Update s0c nếu đang hiển thị "byQty"
+  const s0c = $('s0c');
+  if (s0c && !s0c.className.includes('pos') && !s0c.className.includes('neg')) {
+    s0c.textContent = t('byQty');
+  }
+  // Re-render dynamic parts
+  renderHoldings();
+  renderSummaryCards();
+  if (typeof renderFcAssetScenarios === 'function') { renderFcAssetScenarios(); fcUpdate(); }
+}
+
+function toggleLang() {
+  currentLang = currentLang==='vi' ? 'en' : 'vi';
+  localStorage.setItem('lang', currentLang);
+  applyLang();
+}
+
 // ─────────────────────────────────────────────────────────────
 //  ASSET CATALOG
 // ─────────────────────────────────────────────────────────────
@@ -450,7 +747,33 @@ const usd = (n, d=2) => '$' + Number(n).toLocaleString('en-US', {minimumFraction
 const big = n => !n ? '—' : n>=1e9 ? '$'+(n/1e9).toFixed(2)+'B' : n>=1e6 ? '$'+(n/1e6).toFixed(1)+'M' : '$'+Number(n).toLocaleString();
 const norm = arr => { if(!arr?.length) return []; const b=arr[0]; return arr.map(v=>+(v/b*100).toFixed(2)); };
 const fmtChg = pct => pct==null ? '' : (pct>=0?'▲ +':'▼ ')+Math.abs(pct).toFixed(2)+'% (24h)';
-const qty = id => { const el = $(id); return el ? Math.max(0, parseFloat(el.value)||0) : 0; };
+const qty = id => { const el = $(id); if(!el) return 0; const raw = String(el.value).replace(/,/g,''); return Math.max(0, parseFloat(raw)||0); };
+
+// Format số cho input: luôn dùng dấu phẩy phân cách nghìn, dấu chấm thập phân
+function fmtNum(n, maxDec=8) {
+  if (!n && n!==0) return '';
+  const num = parseFloat(n);
+  if (isNaN(num)) return '';
+  const parts = num.toFixed(maxDec).replace(/\.?0+$/, '').split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return parts.join('.');
+}
+function fmtQtyInput(el) {
+  const cur = el.selectionStart;
+  const oldVal = el.value;
+  const raw = oldVal.replace(/,/g, '');
+  if (raw === '' || raw === '.') return;
+  const num = parseFloat(raw);
+  if (isNaN(num) || num < 0) return;
+  const hasDot = raw.includes('.');
+  const decPart = hasDot ? raw.split('.')[1] : null;
+  const intStr = String(Math.floor(Math.abs(num))).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const newVal = hasDot ? intStr + '.' + (decPart ?? '') : intStr;
+  if (newVal === oldVal) return;
+  el.value = newVal;
+  const diff = newVal.length - oldVal.length;
+  try { el.setSelectionRange(cur + diff, cur + diff); } catch(_) {}
+}
 
 // Palette màu cho asset tùy chỉnh khi chọn preset
 const PALETTE = ['#4f8ef7','#8b6cf7','#f5a623','#34d399','#f87171','#60a5fa','#a78bfa','#34d399','#fb923c','#e879f9'];
@@ -788,44 +1111,164 @@ async function fetchCommodity(id) {
   catch(_) { throw new Error(`${meta.ticker||id} không tải được`); }
 }
 
+const RE_GROWTH = {
+  'vn-hcm':{r:0.12,label:'TP.HCM ~12%/năm'}, 'vn-hn':{r:0.10,label:'Hà Nội ~10%/năm'},
+  'vn-dn':{r:0.08,label:'Đà Nẵng ~8%/năm'}, 'vn-other':{r:0.06,label:'VN khác ~6%/năm'},
+  'sg':{r:0.06,label:'Singapore ~6%/năm'}, 'us':{r:0.05,label:'Mỹ ~5%/năm'},
+  'au':{r:0.07,label:'Úc ~7%/năm'}, 'jp':{r:0.03,label:'Nhật ~3%/năm'}, 'uk':{r:0.05,label:'Anh ~5%/năm'},
+};
+function updateReGrowthHint() {
+  const loc = $('re-location')?.value||'vn-hcm';
+  const g = RE_GROWTH[loc]||RE_GROWTH['vn-hcm'];
+  const reHintEl = $('re-hint');
+  if (reHintEl) reHintEl.innerHTML = `📊 ${t('reHintText')} <strong id="re-hint-val">~${(g.r*100).toFixed(0)}%${t('perYearShort')}</strong>`;
+}
+// ─────────────────────────────────────────────────────────────
+//  FX RATES  (các tiền tệ → USD)
+// ─────────────────────────────────────────────────────────────
+const FX_RATES = { USD:1, VND:null, EUR:null, SGD:null, JPY:null }; // null = chưa load
+const FX_SYMBOLS = { VND:'VND=X', EUR:'EURUSD=X', SGD:'SGDUSD=X', JPY:'JPY=X' };
+// Tỷ giá fallback nếu không fetch được
+const FX_FALLBACK = { USD:1, VND:1/25400, EUR:1.08, SGD:0.74, JPY:1/149 };
+
+async function loadFxRates(currencies) {
+  const needed = [...new Set(currencies)].filter(c => c!=='USD' && FX_RATES[c]==null);
+  if (!needed.length) return;
+  await Promise.allSettled(needed.map(async cur => {
+    try {
+      // Thử Frankfurter API (free, no CORS, EUR-based)
+      const r = await fetchWithTimeout(`https://api.frankfurter.app/latest?from=${cur}&to=USD`);
+      if (r.ok) {
+        const d = await r.json();
+        if (d?.rates?.USD) { FX_RATES[cur] = d.rates.USD; return; }
+      }
+    } catch(_) {}
+    try {
+      // Fallback: Yahoo Finance forex
+      const sym = FX_SYMBOLS[cur];
+      if (sym) {
+        const v = await fetchYahoo(sym);
+        if (v?.price) { FX_RATES[cur] = cur==='VND'||cur==='JPY' ? 1/v.price : v.price; return; }
+      }
+    } catch(_) {}
+    // Dùng fallback cứng
+    FX_RATES[cur] = FX_FALLBACK[cur] ?? 1;
+  }));
+}
+
+function toUSD(amount, currency) {
+  const rate = FX_RATES[currency] ?? FX_FALLBACK[currency] ?? 1;
+  return amount * rate;
+}
+
+function fxLabel(currency) {
+  if (currency==='USD' || !currency) return '';
+  const rate = FX_RATES[currency] ?? FX_FALLBACK[currency];
+  if (!rate) return '';
+  const per1USD = Math.round(1/rate);
+  return currency==='VND' ? `1 USD ≈ ${String(per1USD).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} VND`
+       : currency==='JPY' ? `1 USD ≈ ${String(per1USD).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} JPY`
+       : `1 ${currency} ≈ ${(rate).toFixed(4)} USD`;
+}
+
+function getAssetValue(a,i) {
+  if (a.type==='cash') {
+    const usdVal = toUSD(a.qty||0, a.currency||'USD');
+    return usdVal;
+  }
+  if (a.type==='realestate') return a.qty||0;
+  if (a.price!=null) return a.price*(a.qty||0);
+  if (a.manualPrice) return a.manualPrice*(a.qty||0);
+  return 0;
+}
+function updateCashRate(i,val) { assets[i].cashRate=parseFloat(val)||5.5; renderFcAssetScenarios(); fcUpdate(); saveAll(); }
+function updateReRate(i,val)   { assets[i].reGrowthRate=(parseFloat(val)||8)/100; renderFcAssetScenarios(); fcUpdate(); saveAll(); }
+
 // ─────────────────────────────────────────────────────────────
 function renderHoldings() {
   const row = $('holdings-row');
-  row.innerHTML = assets.map((a, i) => `
+  row.innerHTML = assets.map((a, i) => {
+    const isCash = a.type==='cash', isRE = a.type==='realestate';
+    const qtyLabel = isCash ? (a.currency||'USD') : isRE ? 'USD' : a.ticker.split('.')[0];
+    const qtyPlaceholder = isCash ? 'Số dư tiết kiệm' : isRE ? 'Giá trị BĐS (USD)' : '0';
+    const effectivePrice = a.price ?? a.manualPrice ?? null;
+
+    // Extra info field (lãi suất hoặc % tăng trưởng BĐS)
+    const extraField = isCash ? `
+      <div class="extra-field">
+        <span class="extra-field-label">💰 ${t('savingsRate')}</span>
+        <span style="display:flex;align-items:center;gap:4px;">
+          <input class="einput" id="cashrate-${i}" type="number" min="0" max="30" step="0.1"
+            value="${a.cashRate||5.5}" oninput="updateCashRate(${i},this.value)">
+          <span style="font-size:11px;color:var(--mu);font-family:var(--mono);">% ${t('perYear')}</span>
+        </span>
+      </div>` : isRE ? `
+      <div class="extra-field">
+        <span class="extra-field-label">📍 ${t('growthRate')}</span>
+        <span style="display:flex;align-items:center;gap:4px;">
+          <input class="einput" id="rerate-${i}" type="number" min="0" max="50" step="0.5"
+            value="${((a.reGrowthRate||0.08)*100).toFixed(1)}" oninput="updateReRate(${i},this.value)">
+          <span style="font-size:11px;color:var(--mu);font-family:var(--mono);">% ${t('perYear')}</span>
+        </span>
+      </div>` : '';
+
+    // Value block
+    let valBlock;
+    if (isCash) {
+      const usdVal = toUSD(a.qty||0, a.currency||'USD');
+      const isNotUSD = a.currency && a.currency !== 'USD';
+      const fxInfo = isNotUSD ? fxLabel(a.currency) : '';
+      valBlock = `
+        ${isNotUSD && fxInfo ? `<div class="hval-price" id="price-${i}" style="color:var(--mu);font-size:10px;">💱 ${fxInfo}</div>` : `<div id="price-${i}" style="display:none"></div>`}
+        <div class="hval ${usdVal>0?'ok':''}" id="val-${i}">${usdVal>0 ? usd(usdVal) : '—'}${isNotUSD&&usdVal>0?' <span style="font-size:10px;opacity:.6;font-weight:400">USD</span>':''}</div>
+        ${isNotUSD&&usdVal>0 ? `<div style="font-size:10px;color:var(--mu);font-family:var(--mono);margin-top:2px;">${fmtNum(a.qty||0)} ${a.currency}</div>` : ''}
+        <div class="hval-alloc" id="alloc-${i}"></div>
+        ${extraField}`;
+    } else if (isRE) {
+      const v = a.qty||0;
+      valBlock = `<div id="price-${i}" style="display:none"></div>
+                  <div class="hval ${v>0?'ok':''}" id="val-${i}">${v>0?usd(v):'—'}</div>
+                  <div class="hval-alloc" id="alloc-${i}"></div>${extraField}`;
+    } else if (effectivePrice != null) {
+      valBlock = `<div class="hval-price" id="price-${i}">Giá: ${usd(effectivePrice,effectivePrice>100?2:effectivePrice>1?3:5)}</div>
+                  <div class="hval ${(a.qty||0)>0?'ok':''}" id="val-${i}">${(a.qty||0)>0?usd(effectivePrice*(a.qty||0)):'—'}</div>
+                  <div class="hval-alloc" id="alloc-${i}"></div>`;
+    } else {
+      valBlock = `<div class="hval-price" id="price-${i}" style="color:var(--mu)">${t('noPrice')}</div>
+                  <div class="manual-price-row">
+                    <div class="hinput-wrap" style="flex:1">
+                      <input class="hinput" id="mprice-${i}" type="text" inputmode="decimal"
+                        placeholder="${t('manualPrice')}"
+                        value="${a.manualPrice ? fmtNum(a.manualPrice, 2) : ''}"
+                        oninput="fmtQtyInput(this);setManualPrice(${i},this.value)"
+                        onkeypress="return /[0-9.,]/.test(event.key)"
+                        style="font-size:12px;padding:6px 10px;">
+                      <span class="hunit" style="font-size:9px">USD</span>
+                    </div>
+                    <button class="btn" onclick="retryFetch(${i})" title="${t('retry')}" style="padding:6px 8px;min-width:32px;flex-shrink:0;">${t('retry')}</button>
+                  </div>
+                  <div class="hval ${a.manualPrice&&(a.qty||0)>0?'ok':''}" id="val-${i}">${a.manualPrice&&(a.qty||0)>0?usd(a.manualPrice*(a.qty||0)):'—'}</div>
+                  <div class="hval-alloc" id="alloc-${i}"></div>`;
+    }
+
+    return `
     <div class="hfield" id="hf-${i}">
       <div class="hfield-top">
         <div class="hico" style="background:${a.color}22;">${a.icon}</div>
-        <div>
-          <div class="hlabel">${a.name}</div>
-          <div class="hticker">${a.ticker} · USD</div>
-        </div>
+        <div><div class="hlabel">${a.name}</div><div class="hticker">${a.ticker} · USD</div></div>
       </div>
       <button class="hdelete" onclick="removeAsset(${i})" title="Xoá">×</button>
       <div class="hinput-wrap">
-        <input class="hinput" id="qty-${i}" type="number" min="0" step="any" placeholder="0"
-          value="${a.qty||''}" oninput="onQtyChange(${i})">
-        <span class="hunit">${a.ticker.split('.')[0]}</span>
+        <input class="hinput" id="qty-${i}" type="text" inputmode="decimal"
+          placeholder="${qtyPlaceholder}"
+          value="${a.qty ? fmtNum(a.qty) : ''}"
+          oninput="fmtQtyInput(this);onQtyChange(${i})"
+          onkeypress="return /[0-9.,]/.test(event.key)">
+        <span class="hunit">${qtyLabel}</span>
       </div>
-      <div class="hval-block">
-        ${a.price != null
-          ? `<div class="hval-price" id="price-${i}">Giá: ${usd(a.price, a.price>100?2:a.price>1?3:5)}</div>
-             <div class="hval ${a.qty>0?'ok':''}" id="val-${i}">${a.qty>0 ? usd(a.price*a.qty) : '—'}</div>
-             <div class="hval-alloc" id="alloc-${i}"></div>`
-          : `<div class="hval-price" id="price-${i}" style="color:var(--mu)">Không tải được giá tự động</div>
-             <div class="manual-price-row">
-               <div class="hinput-wrap" style="flex:1">
-                 <input class="hinput" id="mprice-${i}" type="number" min="0" step="any" placeholder="Nhập giá thủ công"
-                   value="${a.manualPrice||''}" oninput="setManualPrice(${i}, this.value)" style="font-size:12px;padding:6px 10px;">
-                 <span class="hunit" style="font-size:9px">USD</span>
-               </div>
-               <button class="btn" onclick="retryFetch(${i})" title="Thử lại" style="padding:6px 8px;min-width:32px;flex-shrink:0;">↻</button>
-             </div>
-             <div class="hval ${(a.manualPrice&&a.qty>0)?'ok':''}" id="val-${i}">${a.manualPrice&&a.qty>0 ? usd(a.manualPrice*a.qty) : '—'}</div>
-             <div class="hval-alloc" id="alloc-${i}"></div>`
-        }
-      </div>
-    </div>
-  `).join('');
+      <div class="hval-block">${valBlock}</div>
+    </div>`;
+  }).join('');
   recalc();
 }
 
@@ -834,57 +1277,49 @@ function renderHoldings() {
 // ─────────────────────────────────────────────────────────────
 function renderSummaryCards() {
   const sub = $('smry-sub');
-  // Tính tổng để hiển thị % phân bổ
-  const vals = assets.map(a => a.price!=null ? a.price*(a.qty||0) : 0);
-  const total = vals.reduce((s,v)=>s+v, 0);
+  const vals = assets.map((a,i)=>getAssetValue(a,i));
+  const total = vals.reduce((s,v)=>s+v,0);
 
-  sub.innerHTML = assets.map((a, i) => {
-    const val = a.price != null ? a.price*(a.qty||0) : null;
-    const pct = (total>0 && val!=null && val>0) ? (val/total*100).toFixed(1)+'%' : null;
-    const chg = fmtChg(a.pct);
-    const chgClass = a.pct!=null ? (a.pct>=0?'pos':'neg') : '';
-
-    // Giá trị hiển thị: nếu có qty→ tổng, nếu không → giá đơn vị
-    let displayVal;
-    if (val!=null && val>0) displayVal = usd(val);
-    else if (a.price!=null) displayVal = usd(a.price, a.price>100?2:a.price>1?3:5);
-    else displayVal = '<span class="sk" style="width:70px;height:20px;display:inline-block;"></span>';
-
+  sub.innerHTML = assets.map((a,i) => {
+    const val = vals[i];
+    const pct = (total>0&&val>0)?(val/total*100).toFixed(1)+'%':null;
+    const chg = a.type==='cash' ? `💰 ${a.cashRate||5.5}% ${t('perYear')}`
+               : a.type==='realestate' ? `🏠 ${((a.reGrowthRate||0.08)*100).toFixed(0)}% ${t('perYear')}`
+               : fmtChg(a.pct);
+    const chgClass = (a.pct!=null&&a.type!=='cash'&&a.type!=='realestate')?(a.pct>=0?'pos':'neg'):'';
+    let displayVal = val>0 ? usd(val) : a.price!=null ? usd(a.price,a.price>100?2:a.price>1?3:5)
+      : '<span class="sk" style="width:70px;height:20px;display:inline-block;"></span>';
     return `
-    <div class="sc" style="border-top: 2px solid ${a.color}33;">
-      ${pct ? `<span class="asset-pct" style="color:${a.color};">${pct}</span>` : ''}
-      <div class="sl">GIÁ TRỊ ${a.ticker.toUpperCase()}</div>
+    <div class="sc" style="border-top:2px solid ${a.color}33;">
+      ${pct?`<span class="asset-pct" style="color:${a.color};">${pct}</span>`:''}
+      <div class="sl">${t('assetValue')} ${a.ticker.toUpperCase()}</div>
       <div class="sv">${displayVal}</div>
-      <div class="ss ${chgClass}">${chg || (a.price==null?'đang tải...':'nhập khối lượng')}</div>
+      <div class="ss ${chgClass}">${chg||(a.type==='cash'||a.type==='realestate'?t('enterValue'):a.price==null?t('loading2'):t('enterQty'))}</div>
     </div>`;
   }).join('');
 
-  const n = assets.length;
-  const isMobile = window.innerWidth <= 640;
-  const cols = isMobile ? Math.min(n, 2) : Math.min(n, 3);
-  sub.style.gridTemplateColumns = cols > 0 ? `repeat(${cols},1fr)` : '1fr';
+  const n=assets.length, isMobile=window.innerWidth<=640;
+  sub.style.gridTemplateColumns=`repeat(${isMobile?Math.min(n,2):Math.min(n,3)},1fr)`;
 }
 
 // ─────────────────────────────────────────────────────────────
 //  RECALC (tổng + phân bổ)
 // ─────────────────────────────────────────────────────────────
 function recalc() {
-  // update prices shown
   assets.forEach((a,i) => {
     const priceEl = $(`price-${i}`);
-    if (priceEl && a.price!=null) priceEl.textContent = 'Giá: '+usd(a.price, a.price>100?2:a.price>1?3:5);
+    if (priceEl && a.price!=null && a.type!=='cash' && a.type!=='realestate')
+      priceEl.textContent = 'Giá: '+usd(a.price,a.price>100?2:a.price>1?3:5);
   });
 
-  // values per asset
   const vals = assets.map((a,i) => {
     const q = qty(`qty-${i}`);
     assets[i].qty = q;
-    return a.price != null ? a.price * q : null;
+    return getAssetValue(a, i);
   });
 
-  // total
-  const total = vals.reduce((s,v) => s + (v??0), 0);
-  const anyVal = vals.some(v => v!=null && v>0);
+  const total = vals.reduce((s,v)=>s+(v??0),0);
+  const anyVal = vals.some(v=>v>0);
 
   if (anyVal && total > 0) {
     $('s0').textContent = usd(total);
@@ -905,17 +1340,29 @@ function recalc() {
 
     // update hval in each holding card
     vals.forEach((v, i) => {
+      const a = assets[i];
       const valEl = $(`val-${i}`);
       const allocEl = $(`alloc-${i}`);
+      const priceEl = $(`price-${i}`);
       if (valEl) {
-        if (v != null) {
-          valEl.textContent = v > 0 ? usd(v) : '—';
-          valEl.className = v > 0 ? 'hval ok' : 'hval';
+        if (a.type==='cash') {
+          const usdVal = toUSD(a.qty||0, a.currency||'USD');
+          const isNotUSD = a.currency && a.currency!=='USD';
+          valEl.innerHTML = usdVal>0 ? usd(usdVal)+(isNotUSD?` <span style="font-size:10px;opacity:.6;font-weight:400">USD</span>`:'') : '—';
+          valEl.className = usdVal>0 ? 'hval ok' : 'hval';
+          if (priceEl && isNotUSD) {
+            const fx = fxLabel(a.currency);
+            priceEl.textContent = fx ? '💱 '+fx : '';
+            priceEl.style.display = fx ? '' : 'none';
+          }
+        } else {
+          if (v > 0) { valEl.textContent = usd(v); valEl.className = 'hval ok'; }
+          else if (v === 0) { valEl.textContent = '—'; valEl.className = 'hval'; }
         }
       }
       if (allocEl) {
-        const pct = v!=null&&v>0 ? (v/total*100).toFixed(1) : null;
-        allocEl.textContent = pct ? pct+'% danh mục' : '';
+        const pct = v>0 ? (v/total*100).toFixed(1) : null;
+        allocEl.textContent = pct ? pct+'% '+t('portAlloc').split('%')[1].trim() : '';
       }
     });
 
@@ -926,14 +1373,14 @@ function recalc() {
       const wp = known.reduce((s,x)=>s+x.pct*(x.val/kt),0);
       const td = known.reduce((s,x)=>s+x.val*(x.pct/100),0);
       $('s0c').className='ss '+(wp>=0?'pos':'neg');
-      $('s0c').textContent=(wp>=0?'▲ +':'▼ ')+Math.abs(wp).toFixed(2)+'% · '+(td>=0?'+':'')+usd(td)+' hôm nay';
+      $('s0c').textContent=(wp>=0?'▲ +':'▼ ')+Math.abs(wp).toFixed(2)+'% · '+(td>=0?'+':'')+usd(td)+' '+t('today');
     }
   } else {
     $('s0').textContent = '—';
     $('alloc-bar').innerHTML = '';
     $('alloc-labels').innerHTML = '';
     $('s0c').className='ss';
-    $('s0c').textContent='theo khối lượng nhập';
+    $('s0c').textContent=t('byQty');
     vals.forEach((_,i) => {
       const valEl=$(`val-${i}`); if(valEl){valEl.textContent='—';valEl.className='hval';}
       const allocEl=$(`alloc-${i}`); if(allocEl) allocEl.textContent='';
@@ -946,9 +1393,9 @@ function recalc() {
 }
 
 function setManualPrice(i, val) {
-  const p = parseFloat(val);
+  const p = parseFloat(String(val).replace(/,/g,''));
   assets[i].manualPrice = p > 0 ? p : null;
-  assets[i].price = assets[i].manualPrice; // dùng làm giá chính
+  assets[i].price = assets[i].manualPrice;
   const priceEl = $(`price-${i}`);
   if (priceEl && assets[i].price) priceEl.textContent = 'Không tải được giá tự động';
   recalc();
@@ -963,6 +1410,8 @@ async function retryFetch(i) {
   renderHoldings();
 }
 
+function updateCashRate(i,val) { assets[i].cashRate=parseFloat(val)||5.5; renderFcAssetScenarios(); fcUpdate(); saveAll(); }
+function updateReRate(i,val)   { assets[i].reGrowthRate=(parseFloat(val)||8)/100; renderFcAssetScenarios(); fcUpdate(); saveAll(); }
 function onQtyChange(i) { recalc(); }
 
 // ─────────────────────────────────────────────────────────────
@@ -974,7 +1423,7 @@ async function loadAll() {
   $('rbtn').disabled = true;
   $('rico').classList.add('spin');
   $('msgs').innerHTML = '';
-  $('ut').textContent = 'đang tải...';
+  $('ut').textContent = t('loading');
   const msgs = [];
 
   const cryptoAssets    = assets.filter(a=>a.type==='crypto');
@@ -1032,13 +1481,18 @@ async function loadAll() {
     } catch(_) {}
   }));
 
+  // Load tỷ giá cho tất cả cash assets
+  const cashCurrencies = assets.filter(a=>a.type==='cash'&&a.currency!=='USD').map(a=>a.currency);
+  if (cashCurrencies.length) await loadFxRates(cashCurrencies);
+
   renderHoldings();
   buildChart();
   recalc();
   setTimeout(() => buildChart(), 200);
 
   $('msgs').innerHTML = msgs.map(m=>`<div class="${m.type==='err'?'err':'info'}">${m.type==='err'?'⚠':'ℹ'} ${m.text}</div>`).join('');
-  $('ut').textContent = 'cập nhật '+new Date().toLocaleTimeString('vi-VN');
+  const timeStr = new Date().toLocaleTimeString('vi-VN');
+  $('ut').textContent = t('updatedAt')+' '+timeStr;
   $('rico').classList.remove('spin');
   $('rbtn').disabled = false;
   busy = false;
@@ -1124,19 +1578,22 @@ function openModal() {
   buildCatalogGrid('stock-grid', STOCK_CATALOG);
   buildCatalogGrid('commodity-grid', COMMODITY_CATALOG);
   setTab('crypto');
+  // Apply ngôn ngữ hiện tại cho modal
+  setTimeout(() => applyLang(), 0);
 }
 function closeModal() { $('modal-overlay').classList.remove('open'); selectedAsset=null; }
 function maybeClose(e) { if(e.target===$('modal-overlay')) closeModal(); }
 
 function setTab(tab) {
   currentTab = tab;
-  ['crypto','stock','commodity','custom'].forEach(t => {
-    $('tab-'+t).style.display = t===tab?'':'none';
+  ['crypto','stock','commodity','cash','realestate','custom'].forEach(t=>{
+    const el=$('tab-'+t); if(el) el.style.display=t===tab?'':'none';
   });
-  document.querySelectorAll('.mtab').forEach((btn,i) => {
-    btn.classList.toggle('active', ['crypto','stock','commodity','custom'][i]===tab);
+  document.querySelectorAll('.mtab').forEach((btn,i)=>{
+    btn.classList.toggle('active',['crypto','stock','commodity','cash','realestate','custom'][i]===tab);
   });
-  selectedAsset = null;
+  selectedAsset=null;
+  if(tab==='realestate') updateReGrowthHint();
 }
 
 function selectPreset(gridId, idx) {
@@ -1150,28 +1607,44 @@ function selectPreset(gridId, idx) {
 function addSelectedAsset() {
   $('modal-err').style.display='none';
   let asset;
-  if (currentTab==='custom') {
+  if (currentTab==='cash') {
+    const name     = ($('cash-name').value.trim())||'Tiền mặt';
+    const currency = $('cash-currency').value;
+    const rate     = parseFloat($('cash-rate').value)||5.5;
+    asset = { id:'cash_'+Date.now(), name, ticker:currency, icon:'💵', color:'#34d399',
+              type:'cash', cashRate:rate, currency, qty:0, price:null, pct:null, history:[] };
+  } else if (currentTab==='realestate') {
+    const name   = ($('re-name').value.trim())||'Bất động sản';
+    const loc    = $('re-location').value;
+    const custom = parseFloat($('re-custom-rate').value);
+    const rate   = (!isNaN(custom)&&custom>0) ? custom/100 : RE_GROWTH[loc]?.r??0.08;
+    asset = { id:'re_'+Date.now(), name, ticker:'BĐS', icon:'🏠', color:'#fb923c',
+              type:'realestate', reLocation:loc, reGrowthRate:rate, qty:0, price:null, pct:null, history:[] };
+  } else if (currentTab==='custom') {
     const name   = $('ci-name').value.trim();
     const ticker = $('ci-ticker').value.trim().toUpperCase();
     const type   = $('ci-type').value;
     const icon   = $('ci-icon').value.trim() || '💰';
     const color  = $('ci-color').value;
-    if (!name || !ticker) { showModalErr('Vui lòng nhập tên và mã ticker'); return; }
+    if (!name || !ticker) { showModalErr(t('errMissingFields')); return; }
     asset = { id: type==='crypto' ? ticker.toLowerCase() : ticker, name, ticker, icon, color, type };
   } else {
-    if (!selectedAsset) { showModalErr('Vui lòng chọn một tài sản'); return; }
+    if (!selectedAsset) { showModalErr(t('errNoAsset')); return; }
     asset = { ...selectedAsset };
   }
   // check duplicate
-  if (assets.find(a=>a.id===asset.id)) { showModalErr('Tài sản này đã có trong danh mục'); return; }
+  if (assets.find(a=>a.id===asset.id)) { showModalErr(t('errDuplicate')); return; }
   asset.qty = 0; asset.price = null; asset.pct = null; asset.history = [];
   assets.push(asset);
   closeModal();
+  // Load tỷ giá nếu là cash với tiền tệ khác USD
+  if (asset.type==='cash' && asset.currency && asset.currency!=='USD') {
+    loadFxRates([asset.currency]).then(() => { renderHoldings(); recalc(); });
+  }
   renderHoldings();
   recalc();
   renderFcAssetScenarios();
   fcUpdate();
-  // fetch price for new asset
   fetchSingleAsset(assets.length-1);
 }
 
@@ -1181,6 +1654,7 @@ function showModalErr(msg) {
 
 async function fetchSingleAsset(i) {
   const a = assets[i];
+  if (a.type==='cash'||a.type==='realestate') { recalc(); return; } // không cần fetch giá
   try {
     if (a.type==='crypto') {
       const [c, hist] = await Promise.all([fetchOneCrypto(a.id), fetchCryptoHistory(a.id)]);
@@ -1222,7 +1696,11 @@ function removeAsset(i) {
 //  PERSIST
 // ─────────────────────────────────────────────────────────────
 function saveAll() {
-  const save = assets.map(a=>({ id:a.id,name:a.name,ticker:a.ticker,icon:a.icon,color:a.color,type:a.type,qty:a.qty||0 }));
+  const save = assets.map(a=>({
+    id:a.id, name:a.name, ticker:a.ticker, icon:a.icon, color:a.color, type:a.type, qty:a.qty||0,
+    cashRate:a.cashRate, currency:a.currency,
+    reLocation:a.reLocation, reGrowthRate:a.reGrowthRate, manualPrice:a.manualPrice,
+  }));
   localStorage.setItem('portfolio_v2', JSON.stringify(save));
 }
 
@@ -1244,13 +1722,26 @@ function loadSaved() {
 // ─────────────────────────────────────────────────────────────
 //  FORECAST ENGINE
 // ─────────────────────────────────────────────────────────────
+const FC_SCENARIO_LABELS = {
+  vi: {
+    base:'TB 10%', hist:'Lịch sử 18.5%', bull15:'Lạc quan 15%', bear6:'Bi quan 6%',
+    base30:'TB 30%', bull80:'Lạc quan 80%', bear20:'Bi quan −20%', real20:'Thực tế 20%',
+    hist86:'Lịch sử 8.6%', bull15c:'Lạc quan 15%', bear3:'Bi quan 3%', mid10:'TB 10%',
+  },
+  en: {
+    base:'Avg 10%', hist:'Historical 18.5%', bull15:'Optimistic 15%', bear6:'Pessimistic 6%',
+    base30:'Avg 30%', bull80:'Optimistic 80%', bear20:'Pessimistic −20%', real20:'Realistic 20%',
+    hist86:'Historical 8.6%', bull15c:'Optimistic 15%', bear3:'Pessimistic 3%', mid10:'Avg 10%',
+  }
+};
+const fcL = () => FC_SCENARIO_LABELS[currentLang] || FC_SCENARIO_LABELS.vi;
+
 const FC_SCENARIOS = {
-  // ETF/Stock
-  stock:  { base:{r:0.10,l:'TB 10%'}, hist:{r:0.185,l:'Lịch sử 18.5%'}, bull:{r:0.15,l:'Lạc quan 15%'}, bear:{r:0.06,l:'Bi quan 6%'} },
-  // Crypto
-  crypto: { base:{r:0.30,l:'TB 30%'}, bull:{r:0.80,l:'Lạc quan 80%'}, bear:{r:-0.20,l:'Bi quan −20%'}, real:{r:0.20,l:'Thực tế 20%'} },
-  // Commodity
-  commodity:{ base:{r:0.086,l:'Lịch sử 8.6%'}, bull:{r:0.15,l:'Lạc quan 15%'}, bear:{r:0.03,l:'Bi quan 3%'}, mid:{r:0.10,l:'TB 10%'} },
+  stock:     { base:{r:0.10,lk:'base'}, hist:{r:0.185,lk:'hist'}, bull:{r:0.15,lk:'bull15'}, bear:{r:0.06,lk:'bear6'} },
+  crypto:    { base:{r:0.30,lk:'base30'}, bull:{r:0.80,lk:'bull80'}, bear:{r:-0.20,lk:'bear20'}, real:{r:0.20,lk:'real20'} },
+  commodity: { base:{r:0.086,lk:'hist86'}, bull:{r:0.15,lk:'bull15c'}, bear:{r:0.03,lk:'bear3'}, mid:{r:0.10,lk:'mid10'} },
+  cash:      { fixed:{r:0.055,lk:'base'} },
+  realestate:{ fixed:{r:0.08, lk:'base'} },
 };
 const FC_YRS = 10;
 let fcInitAmt = 30000, fcDCA = 0;
@@ -1259,7 +1750,7 @@ let fcChart2 = null;
 
 function fcFmt(n) {
   if (Math.abs(n) >= 1e6) return '$'+(n/1e6).toFixed(2)+'M';
-  if (Math.abs(n) >= 1000) return '$'+Math.round(n).toLocaleString('en-US');
+  if (Math.abs(n) >= 1000) return '$'+fmtNum(Math.round(n),0);
   return '$'+n.toFixed(0);
 }
 
@@ -1280,15 +1771,36 @@ function fcDefaultScenario(type) {
 
 function renderFcAssetScenarios() {
   const container = document.getElementById('fc-asset-scenarios');
-  if (!assets.length) { container.innerHTML = '<div style="color:var(--mu);font-size:12px;">Chưa có tài sản nào trong danh mục.</div>'; return; }
+  if (!assets.length) { container.innerHTML = `<div style="color:var(--mu);font-size:12px;">${t('noAssets')}</div>`; return; }
   container.style.gridTemplateColumns = `repeat(${Math.min(assets.length,3)},1fr)`;
   container.innerHTML = assets.map((a,i) => {
+    if (a.type==='cash') return `
+      <div class="hfield" style="padding:14px 16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div class="hico" style="background:${a.color}22;">${a.icon}</div>
+          <div><div style="font-size:12px;font-weight:500;">${a.name}</div><div style="font-size:10px;color:var(--mu);">${a.ticker} · ${currentLang==='vi'?'Tiết kiệm':'Savings'}</div></div>
+        </div>
+        <div style="background:var(--sur2);border-radius:8px;padding:8px 10px;font-size:12px;font-family:var(--mono);">
+          ${t('fcCashLabel')} <span style="color:var(--gr);font-weight:600;">${a.cashRate||5.5}% ${t('perYear')}</span><br>
+          <span style="color:var(--mu);font-size:10px;">${t('fcCashNote')}</span>
+        </div>
+      </div>`;
+    if (a.type==='realestate') return `
+      <div class="hfield" style="padding:14px 16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div class="hico" style="background:${a.color}22;">${a.icon}</div>
+          <div><div style="font-size:12px;font-weight:500;">${a.name}</div><div style="font-size:10px;color:var(--mu);">${currentLang==='vi'?'BĐS · Tăng trưởng':'RE · Appreciation'}</div></div>
+        </div>
+        <div style="background:var(--sur2);border-radius:8px;padding:8px 10px;font-size:12px;font-family:var(--mono);">
+          ${t('fcRELabel')} <span style="color:#fb923c;font-weight:600;">${((a.reGrowthRate||0.08)*100).toFixed(0)}% ${t('perYear')}</span><br>
+          <span style="color:var(--mu);font-size:10px;">${t('fcRENote')}</span>
+        </div>
+      </div>`;
     const scens = fcGetScenarios(a.type);
-    const cur = fcScenarios[i] || fcDefaultScenario(a.type);
-    const btns = Object.entries(scens).map(([k,v]) =>
+    const cur = fcScenarios[i]||fcDefaultScenario(a.type);
+    const btns = Object.entries(scens).map(([k,v])=>
       `<button class="fc-sc-btn${cur===k?' active':''}" style="${cur===k?'background:'+a.color+';':''}"
-        onclick="fcSetScenario(${i},'${k}')">${v.l}</button>`
-    ).join('');
+        onclick="fcSetScenario(${i},'${k}')">${fcL()[v.lk]||v.lk}</button>`).join('');
     return `
     <div class="hfield" style="padding:14px 16px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
@@ -1313,7 +1825,7 @@ function fcFormatInput(el) {
     // Lưu vị trí con trỏ để không bị nhảy
     const selStart = el.selectionStart;
     const oldLen = el.value.length;
-    el.value = Math.round(num).toLocaleString('en-US');
+    el.value = String(Math.round(num)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     const newLen = el.value.length;
     el.setSelectionRange(selStart + (newLen - oldLen), selStart + (newLen - oldLen));
     return Math.round(num);
@@ -1327,11 +1839,11 @@ function fcUpdateInit(v) { fcInitAmt = v; fcUpdate(); }
 function fcUpdateDCA(v)  { fcDCA = v; fcUpdate(); }
 
 function syncFromPortfolio() {
-  const total = assets.reduce((s,a) => s + (a.price!=null ? a.price*(a.qty||0) : 0), 0);
+  const total = assets.reduce((s,a,i) => s + getAssetValue(a,i), 0);
   if (total > 0) {
     fcInitAmt = Math.round(total);
     const el = document.getElementById('fc-init');
-    if (el) el.value = fcInitAmt.toLocaleString('en-US');
+    if (el) el.value = fmtNum(fcInitAmt,0);
   }
   fcUpdate();
 }
@@ -1343,16 +1855,19 @@ function fcUpdate() {
 
   // Tính từng asset
   const assetData = assets.map((a,i) => {
-    const scens = fcGetScenarios(a.type);
-    const key = fcScenarios[i] || fcDefaultScenario(a.type);
-    const rate = scens[key]?.r ?? 0.10;
-    // phân bổ theo % thực tế trong danh mục
-    const totalVal = assets.reduce((s,x) => s+(x.price!=null?x.price*(x.qty||0):0), 0);
-    const myVal = a.price!=null ? a.price*(a.qty||0) : 0;
-    const allocPct = totalVal > 0 ? myVal/totalVal : 1/assets.length;
-    const init = fcInitAmt * allocPct;
-    const dca  = fcDCA * allocPct;
-    return { a, key, rate, allocPct, series: fcCalcAsset(init, dca, rate) };
+    let rate;
+    if (a.type==='cash')        rate = (a.cashRate||5.5)/100;
+    else if (a.type==='realestate') rate = a.reGrowthRate||0.08;
+    else {
+      const scens = fcGetScenarios(a.type);
+      const key   = fcScenarios[i]||fcDefaultScenario(a.type);
+      rate = scens[key]?.r??0.10;
+    }
+    const totalVal = assets.reduce((s,x,j)=>s+getAssetValue(x,j),0);
+    const myVal    = getAssetValue(a,i);
+    const allocPct = totalVal>0 ? myVal/totalVal : 1/assets.length;
+    const init = fcInitAmt*allocPct, dca = fcDCA*allocPct;
+    return { a, rate, allocPct, series:fcCalcAsset(init,dca,rate) };
   });
 
   const total = assetData[0].series.map((_,i) => assetData.reduce((s,d)=>s+d.series[i],0));
@@ -1369,11 +1884,11 @@ function fcUpdate() {
   const cols = Math.min(assets.length+2, 4);
   metricsEl.style.gridTemplateColumns = `repeat(${cols},1fr)`;
   metricsEl.innerHTML = [
-    { l:'Tổng sau '+FC_YRS+' năm', v:fcFmt(final), c:'var(--blue)' },
-    { l:'Lãi ròng', v:(profit>=0?'+':'')+fcFmt(profit), c:profit>=0?'var(--gr)':'var(--re)' },
-    { l:'CAGR danh mục', v:cagr+'%/năm', c:'var(--tx)' },
-    { l:'×lần vốn đầu tư', v:multi+'x', c:'var(--tx)' },
-    ...assetData.map(d=>({ l:d.a.ticker+' 2035', v:fcFmt(d.series[FC_YRS]), c:d.a.color })),
+    { l:t('fcTotalAfter')+' '+FC_YRS+' '+t('fcYears'), v:fcFmt(final), c:'var(--blue)' },
+    { l:t('fcNetProfit'), v:(profit>=0?'+':'')+fcFmt(profit), c:profit>=0?'var(--gr)':'var(--re)' },
+    { l:t('fcCAGR'), v:cagr+'%/'+t('perYear').replace('/',''), c:'var(--tx)' },
+    { l:t('fcMultipleInv'), v:multi+'x', c:'var(--tx)' },
+    ...assetData.map(d=>({ l:d.a.ticker+' '+(startYear+FC_YRS), v:fcFmt(d.series[FC_YRS]), c:d.a.color })),
   ].map(m=>`<div class="fc-metric"><div class="fc-ml">${m.l}</div><div class="fc-mv" style="color:${m.c}">${m.v}</div></div>`).join('');
 
   // Chart
@@ -1402,7 +1917,7 @@ function fcUpdate() {
 
   // Table header
   const thead = document.getElementById('fc-thead');
-  thead.innerHTML = `<tr><th>Năm</th><th>Vốn tích lũy</th>${assetData.map(d=>`<th style="color:${d.a.color}">${d.a.ticker}</th>`).join('')}<th>Tổng</th><th>Lãi</th><th>×lần</th></tr>`;
+  thead.innerHTML = `<tr><th>${t('fcYearLabel')}</th><th>${t('fcCapAccum')}</th>${assetData.map(d=>`<th style="color:${d.a.color}">${d.a.ticker}</th>`).join('')}<th>${t('fcTotal')}</th><th>${t('fcProfit')}</th><th>${t('fcMultiple')}</th></tr>`;
 
   // Table body
   const tbody = document.getElementById('fc-tbody');
@@ -1427,6 +1942,8 @@ function fcUpdate() {
 // Init forecast after assets load
 function initForecast() {
   assets.forEach((_,i) => { if (!fcScenarios[i]) fcScenarios[i] = fcDefaultScenario(assets[i].type); });
+  const initEl = $('fc-init'); if (initEl) initEl.value = fmtNum(fcInitAmt, 0);
+  const dcaEl  = $('fc-dca');  if (dcaEl)  dcaEl.value  = fcDCA > 0 ? fmtNum(fcDCA, 0) : '0';
   renderFcAssetScenarios();
   fcUpdate();
 }
@@ -1442,7 +1959,7 @@ if (!hadSaved) {
 }
 renderHoldings();
 recalc();
-loadAll().then(() => initForecast());
+loadAll().then(() => { initForecast(); applyLang(); });
 
 // Re-render khi xoay màn hình
 window.addEventListener('resize', () => {
