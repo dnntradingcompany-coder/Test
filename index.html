@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quản lý tài sản</title>
+<title>WealthOS – See your entire wealth in one place</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -23,8 +23,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 
 /* ── HEADER ── */
 .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;}
-.logo{font-size:10px;letter-spacing:2.5px;color:var(--mu);margin-bottom:4px;}
-.ttl{font-size:24px;font-weight:600;letter-spacing:-0.5px;}
+.logo{font-size:22px;letter-spacing:4px;font-weight:700;color:var(--tx);margin-bottom:2px;}
+.ttl{font-size:15px;font-weight:400;letter-spacing:0.2px;color:var(--mu);}
 .hright{display:flex;align-items:center;gap:10px;}
 .live{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid rgba(52,211,153,0.3);background:rgba(52,211,153,0.06);font-size:11px;color:var(--gr);font-family:var(--mono);}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--gr);animation:pu 1.5s ease-in-out infinite;}
@@ -84,7 +84,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 .hval.ok{color:var(--gr);}
 .hval-alloc{font-size:10px;font-family:var(--mono);color:var(--mu);margin-top:3px;}
 .manual-price-row{display:flex;gap:6px;margin:6px 0 4px;align-items:center;}
-.extra-field{margin-top:8px;padding:8px 12px;background:var(--sur2);border-radius:8px;border:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.hico-wrap{display:flex;border-radius:7px;}
+.hico-wrap:hover .hico{filter:brightness(1.2);transform:scale(1.08);}
+.hico-wrap .hico{transition:all .2s;}
 .extra-field-label{font-size:10px;color:var(--mu);font-family:var(--mono);white-space:nowrap;}
 .einput{width:68px;background:transparent;border:none;border-bottom:1px solid var(--b2);font-size:13px;font-weight:600;font-family:var(--mono);color:var(--tx);outline:none;text-align:right;padding:2px 4px;}
 .einput:focus{border-bottom-color:var(--blue);}
@@ -158,8 +160,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
   /* Layout */
   .app{padding:1rem 0.85rem;}
   .header{margin-bottom:1.25rem;flex-wrap:wrap;gap:8px;}
-  .ttl{font-size:18px;}
-  .logo{font-size:9px;}
+  .ttl{font-size:11px;}
+  .logo{font-size:17px;letter-spacing:3px;}
   .hright{gap:6px;}
   .live{padding:4px 8px;font-size:10px;}
   .btn{padding:5px 10px;font-size:11px;}
@@ -242,11 +244,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 
   <div class="header">
     <div>
-      <div class="logo" data-i18n="logo">DANH MỤC ĐẦU TƯ</div>
-      <div class="ttl" data-i18n="title">Tài sản của tôi</div>
+      <div class="logo" data-i18n="logo">WEALTHOS</div>
+      <div class="ttl" data-i18n="title">Nền tảng quản trị tài sản thông minh.</div>
     </div>
     <div class="hright">
       <div class="live"><span class="dot"></span>LIVE</div>
+      <button class="btn" id="ai-btn" onclick="openAIAdvisor()" style="font-size:12px;padding:5px 12px;color:#a78bfa;border-color:rgba(167,139,250,0.35);background:rgba(167,139,250,0.06);">
+        ✦ <span>AI Tư vấn</span>
+      </button>
       <button class="btn" id="lang-btn" onclick="toggleLang()" style="font-size:13px;padding:5px 10px;letter-spacing:.5px;">🇬🇧 EN</button>
       <button class="btn" id="rbtn" onclick="loadAll()">
         <svg id="rico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
@@ -303,7 +308,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
   <!-- ── DỰ BÁO TĂNG TRƯỞNG ── -->
   <div class="csec" style="margin-top:1.5rem;" id="forecast-section">
     <div class="chdr" style="margin-bottom:16px;">
-      <span class="ctit" data-i18n="forecastTitle">DỰ BÁO TĂNG TRƯỞNG 10 NĂM</span>
+      <span class="ctit" data-i18n="forecastTitle">DỰ BÁO TĂNG TRƯỞNG 3 NĂM</span>
       <button class="btn" onclick="syncFromPortfolio()" style="font-size:11px;padding:5px 12px;color:var(--gr);border-color:rgba(52,211,153,0.3);">
         ↺ <span data-i18n="syncPortfolio">Đồng bộ từ danh mục</span>
       </button>
@@ -450,18 +455,62 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
   </div>
 </div>
 
+<!-- ── AI ADVISOR MODAL ── -->
+<div class="modal-overlay" id="ai-modal-overlay" onclick="maybeCloseAI(event)" style="z-index:200;">
+  <div class="modal" style="width:min(520px,94vw);max-height:90vh;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+      <span style="font-size:20px;">✦</span>
+      <h3 style="font-size:16px;" data-i18n="aiTitle">AI Tư vấn Danh mục</h3>
+    </div>
+    <div class="modal-sub" id="ai-modal-sub" data-i18n="aiSub">Phân tích điểm mạnh và điểm yếu danh mục hiện tại</div>
+
+    <div id="ai-setup" style="margin-top:12px;">
+      <div id="ai-setup-err" class="modal-err"></div>
+      <div class="modal-btns">
+        <button class="mbtn" id="ai-close-btn" onclick="closeAIAdvisor()" data-i18n="aiClose">Đóng</button>
+        <button class="mbtn mbtn-primary" id="ai-analyze-btn" onclick="runAIAnalysis()" style="background:linear-gradient(135deg,#7c3aed,#4f8ef7);border-color:transparent;" data-i18n="aiAnalyze">✦ Phân tích ngay</button>
+      </div>
+    </div>
+
+    <!-- Result area -->
+    <div id="ai-result" style="display:none;">
+      <div id="ai-result-body" style="font-size:13px;line-height:1.75;color:var(--tx);"></div>
+      <div class="modal-btns" style="margin-top:16px;">
+        <button class="mbtn" id="ai-back-btn" onclick="resetAIAdvisor()" data-i18n="aiBack">← Phân tích lại</button>
+        <button class="mbtn" id="ai-close-btn2" onclick="closeAIAdvisor()" data-i18n="aiClose">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.ai-risk-opt{
+  padding:12px 14px;border-radius:10px;border:1px solid var(--b);
+  background:var(--sur2);cursor:pointer;transition:all .2s;text-align:center;
+}
+.ai-risk-opt:hover{border-color:var(--b2);background:var(--sur);}
+.ai-risk-opt.sel{border-color:#a78bfa;background:rgba(167,139,250,0.08);}
+.ai-typing{display:inline-block;width:6px;height:14px;background:#a78bfa;border-radius:2px;animation:blink .7s step-end infinite;vertical-align:middle;margin-left:2px;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+#ai-result-body h3{font-size:13px;font-weight:600;color:#a78bfa;margin:14px 0 6px;letter-spacing:.5px;}
+#ai-result-body ul{padding-left:16px;margin:4px 0 8px;}
+#ai-result-body li{margin-bottom:4px;}
+#ai-result-body strong{color:var(--tx);}
+#ai-result-body .alloc-chip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;font-family:var(--mono);margin:2px 3px;background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.25);color:#c4b5fd;}
+</style>
+
 <script>
 // ─────────────────────────────────────────────────────────────
 //  I18N ENGINE
 // ─────────────────────────────────────────────────────────────
 const LANG = {
   vi: {
-    logo:'DANH MỤC ĐẦU TƯ', title:'Tài sản của tôi',
+    logo:'WEALTHOS', title:'Nền tảng quản trị tài sản thông minh.',
     refresh:'Làm mới', addAsset:'Thêm tài sản',
     totalPortfolio:'TỔNG DANH MỤC (USD)', byQty:'theo khối lượng nhập',
     chart7d:'BIẾN ĐỘNG 7 NGÀY (chỉ số hóa, ngày đầu = 100)',
     source:'Nguồn', loading:'đang tải...', updatedAt:'cập nhật',
-    forecastTitle:'DỰ BÁO TĂNG TRƯỞNG 10 NĂM',
+    forecastTitle:'DỰ BÁO TĂNG TRƯỞNG 3 NĂM',
     syncPortfolio:'Đồng bộ từ danh mục',
     initCapital:'VỐN BAN ĐẦU (USD)', dcaMonth:'DCA / THÁNG (USD)',
     disclaimer:'⚠ Đây là mô phỏng dựa trên lãi suất giả định — không phải dự báo thực tế. Crypto và hàng hóa có biến động cực cao, kịch bản thực tế có thể khác đáng kể.',
@@ -509,14 +558,32 @@ const LANG = {
     locAu:'Úc (~7%/năm)', locJp:'Nhật Bản (~3%/năm)', locUk:'Anh (~5%/năm)',
     locGroupVn:'🇻🇳 Việt Nam', locGroupIntl:'🌏 Quốc tế',
     today:'hôm nay',
+    // AI Advisor
+    aiBtn:'AI Tư vấn',
+    aiTitle:'AI Tư vấn Danh mục',
+    aiSub:'Phân tích danh mục và gợi ý phân bổ tối ưu theo khẩu vị rủi ro',
+    aiRiskLabel:'KHẨU VỊ RỦI RO CỦA BẠN',
+    aiRisk0Name:'An toàn', aiRisk0Desc:'Bảo toàn vốn, rủi ro thấp',
+    aiRisk1Name:'Cân bằng', aiRisk1Desc:'Tăng trưởng vừa phải, rủi ro trung bình',
+    aiRisk2Name:'Tăng trưởng', aiRisk2Desc:'Tối ưu tăng trưởng dài hạn',
+    aiRisk3Name:'Mạo hiểm', aiRisk3Desc:'Lợi nhuận cao, chấp nhận biến động lớn',
+    aiKeyLabel:'GOOGLE GEMINI API KEY',
+    aiKeyHint:'Key được lưu trong trình duyệt, không gửi đi đâu ngoài Google.',
+    aiContextLabel:'THÔNG TIN THÊM (tùy chọn)',
+    aiContextPlh:'VD: Tôi 30 tuổi, đầu tư dài hạn 10 năm, thu nhập ổn định...',
+    aiClose:'Đóng', aiAnalyze:'✦ Phân tích ngay', aiAnalyzing:'Đang phân tích...',
+    aiBack:'← Phân tích lại',
+    aiErrNoRisk:'Vui lòng chọn khẩu vị rủi ro trước khi phân tích.',
+    aiErrNoKey:'Vui lòng nhập Google Gemini API Key.',
+    aiErrConn:'Lỗi kết nối. Vui lòng thử lại.',
   },
   en: {
-    logo:'MY PORTFOLIO', title:'My Assets',
+    logo:'WEALTHOS', title:'See your entire wealth in one place',
     refresh:'Refresh', addAsset:'Add Asset',
     totalPortfolio:'TOTAL PORTFOLIO (USD)', byQty:'enter quantities below',
     chart7d:'7-DAY PERFORMANCE (indexed, day 1 = 100)',
     source:'Source', loading:'loading...', updatedAt:'updated',
-    forecastTitle:'10-YEAR GROWTH FORECAST',
+    forecastTitle:'3-YEAR GROWTH FORECAST',
     syncPortfolio:'Sync from Portfolio',
     initCapital:'INITIAL CAPITAL (USD)', dcaMonth:'DCA / MONTH (USD)',
     disclaimer:'⚠ This is a simulation based on assumed rates — not a real forecast. Crypto and commodities are highly volatile; actual results may differ significantly.',
@@ -564,6 +631,24 @@ const LANG = {
     locAu:'Australia (~7%/yr)', locJp:'Japan (~3%/yr)', locUk:'UK (~5%/yr)',
     locGroupVn:'🇻🇳 Vietnam', locGroupIntl:'🌏 International',
     today:'today',
+    // AI Advisor
+    aiBtn:'AI Advisor',
+    aiTitle:'AI Portfolio Advisor',
+    aiSub:'Analyze your portfolio and get optimal allocation suggestions based on your risk profile',
+    aiRiskLabel:'YOUR RISK PROFILE',
+    aiRisk0Name:'Conservative', aiRisk0Desc:'Capital preservation, low risk',
+    aiRisk1Name:'Balanced', aiRisk1Desc:'Moderate growth, medium risk',
+    aiRisk2Name:'Growth', aiRisk2Desc:'Optimized for long-term growth',
+    aiRisk3Name:'Aggressive', aiRisk3Desc:'High returns, accepting large volatility',
+    aiKeyLabel:'GOOGLE GEMINI API KEY',
+    aiKeyHint:'Key is stored in your browser, only sent to Google.',
+    aiContextLabel:'ADDITIONAL CONTEXT (optional)',
+    aiContextPlh:'e.g. I\'m 30, investing long-term for 10 years, stable income...',
+    aiClose:'Close', aiAnalyze:'✦ Analyze now', aiAnalyzing:'Analyzing...',
+    aiBack:'← Analyze again',
+    aiErrNoRisk:'Please select a risk profile before analyzing.',
+    aiErrNoKey:'Please enter your Google Gemini API Key.',
+    aiErrConn:'Connection error. Please try again.',
   }
 };
 
@@ -584,13 +669,22 @@ function applyLang() {
   const setLbl = (id,key) => { const el=document.getElementById(id); if(el) el.textContent=t(key); };
   const setPlh = (id,key) => { const el=document.getElementById(id); if(el) el.placeholder=t(key); };
   const setVal = (id,key) => { const el=document.getElementById(id); if(el&&el.type!=='text'&&el.tagName!=='SELECT') el.value=t(key); };
-  // Modal h3/sub
-  const mh3 = document.querySelector('.modal h3'); if(mh3) mh3.textContent = t('modalTitle');
-  const msub = document.querySelector('.modal-sub'); if(msub) msub.textContent = t('modalSub');
-  // Modal buttons
-  const btns = document.querySelectorAll('.mbtn');
-  if(btns[0]) btns[0].textContent = t('btnCancel');
-  if(btns[1]) btns[1].textContent = t('btnAdd');
+  // Modal h3/sub — scope to asset modal only (not AI modal)
+  const assetModal = document.querySelector('#modal-overlay .modal');
+  if (assetModal) {
+    const mh3 = assetModal.querySelector('h3'); if(mh3) mh3.textContent = t('modalTitle');
+    const msub = assetModal.querySelector('.modal-sub'); if(msub) msub.textContent = t('modalSub');
+  }
+  // Modal buttons — scope to asset modal only
+  const assetBtns = assetModal ? assetModal.querySelectorAll('.mbtn') : [];
+  if(assetBtns[0]) assetBtns[0].textContent = t('btnCancel');
+  if(assetBtns[1]) assetBtns[1].textContent = t('btnAdd');
+  // AI advisor button in header
+  const aiBtn = document.getElementById('ai-btn');
+  if(aiBtn) aiBtn.querySelector('span').textContent = t('aiBtn');
+  // AI context placeholder
+  const aiCtx = document.getElementById('ai-context');
+  if(aiCtx) aiCtx.placeholder = t('aiContextPlh');
   // Cash tab inputs
   setPlh('cash-name', 'cashPlaceholder');
   // RE tab inputs
@@ -722,6 +816,14 @@ const STOCK_CATALOG = [
   { id:'SPY',     name:'S&P 500 ETF', ticker:'SPY',     icon:'🇺🇸', color:'#34d399', type:'stock' },
   { id:'QQQ',     name:'Nasdaq ETF',  ticker:'QQQ',     icon:'💹', color:'#818cf8', type:'stock' },
   { id:'VCB.VN',  name:'Vietcombank', ticker:'VCB.VN',  icon:'🏦', color:'#00b14f', type:'stock' },
+  { id:'FPT.VN',  name:'FPT Corp',    ticker:'FPT.VN',  icon:'💻', color:'#f97316', type:'stock' },
+  { id:'VNM.VN',  name:'Vinamilk',    ticker:'VNM.VN',  icon:'🥛', color:'#3b82f6', type:'stock' },
+  { id:'HPG.VN',  name:'Hoà Phát',    ticker:'HPG.VN',  icon:'🏭', color:'#dc2626', type:'stock' },
+  { id:'MSN.VN',  name:'Masan',       ticker:'MSN.VN',  icon:'🛒', color:'#7c3aed', type:'stock' },
+  { id:'TCB.VN',  name:'Techcombank', ticker:'TCB.VN',  icon:'🏧', color:'#d97706', type:'stock' },
+  { id:'VHM.VN',  name:'Vinhomes',    ticker:'VHM.VN',  icon:'🏘️', color:'#059669', type:'stock' },
+  { id:'VPB.VN',  name:'VPBank',      ticker:'VPB.VN',  icon:'🏛️', color:'#0ea5e9', type:'stock' },
+  { id:'MWG.VN',  name:'Thế Giới Di Động', ticker:'MWG.VN', icon:'📱', color:'#8b5cf6', type:'stock' },
 ];
 const COMMODITY_CATALOG = [
   { id:'XAUUSD', name:'Vàng',         ticker:'GOLD',   icon:'🥇', color:'#ffd700', type:'commodity', stooq:'xauusd', cc:'XAU' },
@@ -837,9 +939,14 @@ async function fetchTwelveData(symbol) {
   return { price, pct, history: [] };
 }
 
+// Các suffix cổ phiếu trả về giá VND từ Yahoo
+const VND_SUFFIXES = ['.VN'];
+const isVNStock = sym => VND_SUFFIXES.some(s => sym.toUpperCase().endsWith(s));
+
 async function fetchYahoo(symbol) {
   const cached = cacheGet('yahoo:'+symbol);
   if (cached) return { price: cached.price, pct: cached.pct, history: [] };
+
   const parseYahoo = d => {
     if (d?.chart?.result?.[0]) {
       const res = d.chart.result[0];
@@ -885,6 +992,15 @@ async function fetchYahoo(symbol) {
 
   try {
     const result = await Promise.any(allAttempts);
+    // Nếu là cổ phiếu VN, giá trả về là VND → cần convert sang USD
+    if (isVNStock(symbol)) {
+      await loadFxRates(['VND']); // đảm bảo có tỷ giá
+      const fxRate = FX_RATES['VND'] ?? FX_FALLBACK['VND'];
+      result.price    = result.price * fxRate;
+      result.history  = (result.history || []).map(p => p * fxRate);
+      // pct giữ nguyên vì đã là %
+      result.isVND = true; // đánh dấu để hiển thị
+    }
     cacheSet('yahoo:'+symbol, result.price, result.pct);
     return result;
   }
@@ -1230,7 +1346,13 @@ function renderHoldings() {
                   <div class="hval ${v>0?'ok':''}" id="val-${i}">${v>0?usd(v):'—'}</div>
                   <div class="hval-alloc" id="alloc-${i}"></div>${extraField}`;
     } else if (effectivePrice != null) {
-      valBlock = `<div class="hval-price" id="price-${i}">Giá: ${usd(effectivePrice,effectivePrice>100?2:effectivePrice>1?3:5)}</div>
+      const isVN = isVNStock(a.id);
+      const fxRate = FX_RATES['VND'] ?? FX_FALLBACK['VND'];
+      const priceVND = isVN && fxRate ? Math.round(effectivePrice / fxRate) : null;
+      const priceLabel = isVN && priceVND
+        ? `Giá: ${usd(effectivePrice)} (${priceVND.toLocaleString('en-US')} VND)`
+        : `Giá: ${usd(effectivePrice, effectivePrice>100?2:effectivePrice>1?3:5)}`;
+      valBlock = `<div class="hval-price" id="price-${i}">${priceLabel}</div>
                   <div class="hval ${(a.qty||0)>0?'ok':''}" id="val-${i}">${(a.qty||0)>0?usd(effectivePrice*(a.qty||0)):'—'}</div>
                   <div class="hval-alloc" id="alloc-${i}"></div>`;
     } else {
@@ -1254,8 +1376,16 @@ function renderHoldings() {
     return `
     <div class="hfield" id="hf-${i}">
       <div class="hfield-top">
-        <div class="hico" style="background:${a.color}22;">${a.icon}</div>
-        <div><div class="hlabel">${a.name}</div><div class="hticker">${a.ticker} · USD</div></div>
+        <label class="hico-wrap" title="Đổi màu" style="cursor:pointer;position:relative;">
+          <div class="hico" id="hico-${i}" style="background:${a.color}22;border:2px solid ${a.color}44;transition:border-color .2s;">${a.icon}</div>
+          <input type="color" value="${a.color}"
+            onchange="changeAssetColor(${i},this.value)"
+            style="position:absolute;opacity:0;width:100%;height:100%;top:0;left:0;cursor:pointer;">
+        </label>
+        <div>
+          <div class="hlabel">${a.name}</div>
+          <div class="hticker">${a.ticker} · USD</div>
+        </div>
       </div>
       <button class="hdelete" onclick="removeAsset(${i})" title="Xoá">×</button>
       <div class="hinput-wrap">
@@ -1308,8 +1438,15 @@ function renderSummaryCards() {
 function recalc() {
   assets.forEach((a,i) => {
     const priceEl = $(`price-${i}`);
-    if (priceEl && a.price!=null && a.type!=='cash' && a.type!=='realestate')
-      priceEl.textContent = 'Giá: '+usd(a.price,a.price>100?2:a.price>1?3:5);
+    if (priceEl && a.price!=null && a.type!=='cash' && a.type!=='realestate') {
+      if (isVNStock(a.id)) {
+        const fxRate = FX_RATES['VND'] ?? FX_FALLBACK['VND'];
+        const priceVND = fxRate ? Math.round(a.price / fxRate) : null;
+        priceEl.textContent = `Giá: ${usd(a.price)} (${priceVND ? priceVND.toLocaleString('en-US')+' VND' : '...'})`;
+      } else {
+        priceEl.textContent = 'Giá: '+usd(a.price, a.price>100?2:a.price>1?3:5);
+      }
+    }
   });
 
   const vals = assets.map((a,i) => {
@@ -1412,6 +1549,22 @@ async function retryFetch(i) {
 
 function updateCashRate(i,val) { assets[i].cashRate=parseFloat(val)||5.5; renderFcAssetScenarios(); fcUpdate(); saveAll(); }
 function updateReRate(i,val)   { assets[i].reGrowthRate=(parseFloat(val)||8)/100; renderFcAssetScenarios(); fcUpdate(); saveAll(); }
+function changeAssetColor(i, color) {
+  assets[i].color = color;
+  // Update icon background ngay không cần re-render toàn bộ
+  const hico = $(`hico-${i}`);
+  if (hico) {
+    hico.style.background = color+'22';
+    hico.style.borderColor = color+'44';
+  }
+  // Update alloc bar, legend, summary cards
+  recalc();
+  renderSummaryCards();
+  buildChart();
+  if (typeof renderFcAssetScenarios === 'function') renderFcAssetScenarios();
+  saveAll();
+}
+
 function onQtyChange(i) { recalc(); }
 
 // ─────────────────────────────────────────────────────────────
@@ -1481,9 +1634,11 @@ async function loadAll() {
     } catch(_) {}
   }));
 
-  // Load tỷ giá cho tất cả cash assets
+  // Load FX cho cash assets và VN stocks
+  const needVND = assets.some(a => (a.type==='cash'&&a.currency==='VND') || isVNStock(a.id));
   const cashCurrencies = assets.filter(a=>a.type==='cash'&&a.currency!=='USD').map(a=>a.currency);
-  if (cashCurrencies.length) await loadFxRates(cashCurrencies);
+  const fxCurrencies = [...new Set([...cashCurrencies, ...(needVND?['VND']:[])])];
+  if (fxCurrencies.length) await loadFxRates(fxCurrencies);
 
   renderHoldings();
   buildChart();
@@ -1743,7 +1898,7 @@ const FC_SCENARIOS = {
   cash:      { fixed:{r:0.055,lk:'base'} },
   realestate:{ fixed:{r:0.08, lk:'base'} },
 };
-const FC_YRS = 10;
+const FC_YRS = 3;
 let fcInitAmt = 30000, fcDCA = 0;
 let fcScenarios = {}; // assetIndex → scenarioKey
 let fcChart2 = null;
@@ -1995,6 +2150,124 @@ async function silentRefresh() {
   $('ut').textContent = 'cập nhật '+new Date().toLocaleTimeString('vi-VN');
 }
 setInterval(silentRefresh, 5 * 60 * 1000); // 5 phút
+
+// ─────────────────────────────────────────────────────────────
+//  AI ADVISOR
+// ─────────────────────────────────────────────────────────────
+let selectedRisk = null;
+
+function openAIAdvisor() {
+  document.getElementById('ai-modal-overlay').classList.add('open');
+  const keyEl = document.getElementById('ai-apikey');
+  if (keyEl && !keyEl.value) keyEl.value = 'AQ.Ab8RN6IZiG7hXMlIffSJsbXrHU7YRI26FP6izsqsnoBJtk06jg';
+}
+function saveApiKey(val) {
+  localStorage.setItem('gemini_api_key', val);
+  updateKeyStatus(val);
+}
+function updateKeyStatus(val) {
+  const el = document.getElementById('ai-key-status');
+  if (!el) return;
+  if (val.length > 10) { el.textContent = '✓ đã lưu'; el.style.color = 'var(--gr)'; }
+  else { el.textContent = ''; }
+}
+function closeAIAdvisor() {
+  document.getElementById('ai-modal-overlay').classList.remove('open');
+}
+function maybeCloseAI(e) {
+  if (e.target === document.getElementById('ai-modal-overlay')) closeAIAdvisor();
+}
+function resetAIAdvisor() {
+  selectedRisk = null;
+  document.querySelectorAll('.ai-risk-opt').forEach(el => el.classList.remove('sel'));
+  document.getElementById('ai-setup').style.display = '';
+  document.getElementById('ai-result').style.display = 'none';
+  document.getElementById('ai-setup-err').style.display = 'none';
+  document.getElementById('ai-analyze-btn').disabled = false;
+  document.getElementById('ai-analyze-btn').innerHTML = '✦ Phân tích ngay';
+  document.getElementById('ai-modal-sub').textContent = 'Phân tích danh mục và gợi ý phân bổ tối ưu theo khẩu vị rủi ro';
+}
+function selectRisk(el) {
+  document.querySelectorAll('.ai-risk-opt').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedRisk = el.dataset.risk;
+}
+
+function buildPortfolioSummary() {
+  if (!assets || assets.length === 0) return 'Danh mục hiện chưa có tài sản nào.';
+  const total = assets.reduce((s, a) => {
+    const val = (a.price != null && a.qty > 0) ? a.price * a.qty : (a.manualValue || 0);
+    return s + val;
+  }, 0);
+  const lines = assets.map(a => {
+    const val = (a.price != null && a.qty > 0) ? a.price * a.qty : (a.manualValue || 0);
+    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+    return `- ${a.name} (${a.ticker}, loại: ${a.type}): $${val.toLocaleString('en-US', {maximumFractionDigits:0})} — ${pct}% danh mục`;
+  });
+  return `Tổng danh mục: $${total.toLocaleString('en-US', {maximumFractionDigits:0})}\n${lines.join('\n')}`;
+}
+
+const RISK_LABELS = {
+  conservative: () => t('aiRisk0Name') + ' — ' + t('aiRisk0Desc'),
+  balanced:     () => t('aiRisk1Name') + ' — ' + t('aiRisk1Desc'),
+  growth:       () => t('aiRisk2Name') + ' — ' + t('aiRisk2Desc'),
+  aggressive:   () => t('aiRisk3Name') + ' — ' + t('aiRisk3Desc'),
+};
+
+async function runAIAnalysis() {
+  const errEl = document.getElementById('ai-setup-err');
+  errEl.style.display = 'none';
+
+  const btn = document.getElementById('ai-analyze-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="ai-typing"></span> ${t('aiAnalyzing')}`;
+
+  const portfolioText = buildPortfolioSummary();
+
+  const prompt = `Phân tích ngắn gọn danh mục đầu tư này:
+${portfolioText}
+
+Chỉ nhận xét điểm mạnh và điểm yếu của danh mục hiện tại. Trả lời tiếng Việt, súc tích, dùng bullet points.`;
+
+  try {
+    const workerUrl = 'https://twilight-silence-ee34.dnntradingcompany.workers.dev';
+    const response = await fetch(workerUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+    const data = await response.json();
+    if (data.error) throw new Error(JSON.stringify(data.error));
+    const text = data.content?.map(b => b.text || '').join('') || 'Không nhận được phản hồi.';
+
+    document.getElementById('ai-setup').style.display = 'none';
+    document.getElementById('ai-result').style.display = '';
+    document.getElementById('ai-modal-sub').textContent = `${t('aiRisk' + ['conservative','balanced','growth','aggressive'].indexOf(selectedRisk) + 'Name')}`;
+
+    const body = document.getElementById('ai-result-body');
+    body.innerHTML = formatAIResponse(text);
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = t('aiAnalyze');
+    errEl.textContent = t('aiErrConn') + ' ' + (err.message || '');
+    errEl.style.display = 'block';
+  }
+}
+
+function formatAIResponse(text) {
+  return text
+    .replace(/^###\s+(.+)/gm, '<h3>$1</h3>')
+    .replace(/^##\s+(.+)/gm, '<h3>$1</h3>')
+    .replace(/^#\s+(.+)/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^[-•]\s+(.+)/gm, '<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')
+    .replace(/\n{2,}/g, '<br><br>')
+    .replace(/\n/g, '<br>')
+    .replace(/(\d+[-–]\d+%|\d+%)/g, '<span class="alloc-chip">$1</span>');
+}
 </script>
 </body>
 </html>
