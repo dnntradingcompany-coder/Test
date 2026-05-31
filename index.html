@@ -131,26 +131,105 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 .foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+/* ── FORECAST ── */
+.fc-sc-btn{font-size:10px;padding:3px 10px;border-radius:6px;border:1px solid var(--b2);background:transparent;color:var(--mu);cursor:pointer;font-family:var(--sans);transition:all .15s;white-space:nowrap;}
+.fc-sc-btn:hover{background:var(--sur2);color:var(--tx);}
+.fc-sc-btn.active{color:#fff;border-color:transparent;}
+.fc-metric{background:var(--sur2);border-radius:10px;padding:12px 14px;}
+.fc-metric .fc-ml{font-size:9px;color:var(--mu);letter-spacing:.5px;margin-bottom:4px;}
+.fc-metric .fc-mv{font-size:16px;font-weight:600;font-family:var(--mono);}
+#fc-table th{padding:7px 8px;background:var(--sur2);font-size:9px;color:var(--mu);font-weight:600;text-align:right;border-bottom:1px solid var(--b);}
+#fc-table th:first-child{text-align:left;}
+#fc-table td{padding:6px 8px;border-bottom:1px solid var(--b);text-align:right;font-size:11px;font-family:var(--mono);}
+#fc-table td:first-child{text-align:left;font-weight:500;}
+#fc-table tr.fc-hl td{background:rgba(79,142,247,0.06);}
+.fc-pos{color:var(--gr);font-weight:600;}.fc-neg{color:var(--re);font-weight:600;}
+.fc-params-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+@media(max-width:640px){.fc-params-grid{grid-template-columns:1fr !important;}}
 .fsrc{font-size:11px;color:var(--mu);font-family:var(--mono);}
 .err{font-size:11px;color:var(--re);padding:8px 12px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:8px;margin-top:10px;}
 .info{font-size:11px;color:#60a5fa;padding:8px 12px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);border-radius:8px;margin-top:10px;}
 
 @media(max-width:640px){
-  .app{padding:1.25rem 1rem;}
-  .ttl{font-size:20px;}
+  /* Layout */
+  .app{padding:1rem 0.85rem;}
+  .header{margin-bottom:1.25rem;flex-wrap:wrap;gap:8px;}
+  .ttl{font-size:18px;}
+  .logo{font-size:9px;}
+  .hright{gap:6px;}
+  .live{padding:4px 8px;font-size:10px;}
+  .btn{padding:5px 10px;font-size:11px;}
+
+  /* Tổng danh mục */
+  .sc-total{padding:16px 18px;}
+  .sc-total .sv{font-size:28px;letter-spacing:-1px;}
+  .sc-total .ss{font-size:11px;}
+  .alloc-labels{gap:8px 10px;}
+  .alloc-lbl{font-size:9px;}
+  .smry-sub{grid-template-columns:1fr 1fr;gap:8px;}
+  .sv{font-size:15px;}
+  .sl{font-size:9px;}
+  .sc{padding:10px 12px;}
+  .sc .asset-pct{font-size:10px;padding:2px 5px;}
+
+  /* Holdings */
   .holdings-row{grid-template-columns:1fr;gap:10px;}
   .hinput{font-size:16px;padding:10px 52px 10px 12px;}
-  .smry-sub{grid-template-columns:1fr;gap:10px;}
-  .sc-total .sv{font-size:30px;}
-  .sv{font-size:16px;}
-  .cw{height:160px;}
-  .foot{flex-direction:column;align-items:flex-start;gap:10px;}
-  .asset-grid{grid-template-columns:1fr;}
+  .hfield{padding:12px 14px;}
+  .hlabel{font-size:11px;}
+  .hticker{font-size:9px;}
+  .hval{font-size:13px;}
+  .hval-price{font-size:10px;}
+
+  /* Chart 7 ngày */
+  .csec{padding:14px;}
+  .chdr{flex-direction:column;align-items:flex-start;gap:8px;}
+  .ctit{font-size:9px;}
+  .leg{gap:8px;}
+  .li{font-size:10px;}
+  .cw{height:150px;}
+
+  /* Footer */
+  .foot{flex-direction:column;align-items:flex-start;gap:8px;}
+  .fsrc{font-size:10px;}
+
+  /* Modal */
+  .modal{padding:18px 16px;width:95vw;}
+  .modal h3{font-size:14px;}
+  .modal-sub{font-size:10px;}
+  .modal-tabs{gap:5px;}
+  .mtab{padding:4px 9px;font-size:10px;}
+  .asset-grid{grid-template-columns:1fr 1fr;gap:6px;}
+  .asset-opt{padding:8px 10px;}
+  .ao-name{font-size:11px;}
+  .ao-tick{font-size:9px;}
   .modal-row{grid-template-columns:1fr;}
+  .modal-input{font-size:13px;padding:8px 10px;}
+  .mbtn{padding:7px 14px;font-size:11px;}
+
+  /* Forecast */
+  #fc-asset-scenarios{grid-template-columns:1fr !important;}
+  #fc-metrics{grid-template-columns:1fr 1fr !important;}
+  .fc-metric{padding:10px 12px;}
+  .fc-metric .fc-mv{font-size:14px;}
+  .fc-metric .fc-ml{font-size:9px;}
+  /* Sliders vốn/DCA */
+  #forecast-section > div:nth-child(3){grid-template-columns:1fr !important;}
+  /* Chart dự báo */
+  #fc-chart{height:180px !important;}
+  #forecast-section [style*="height:260px"]{height:180px !important;}
+  /* Bảng ẩn bớt cột trên mobile */
+  #fc-table{font-size:10px;}
+  #fc-table th,#fc-table td{padding:5px 5px;}
+  /* Sync button */
+  .chdr .btn{font-size:10px;padding:4px 8px;}
 }
+
 @media(min-width:641px) and (max-width:900px){
   .holdings-row{grid-template-columns:repeat(2,1fr);}
   .smry-sub{grid-template-columns:repeat(3,1fr);}
+  #fc-asset-scenarios{grid-template-columns:repeat(2,1fr) !important;}
+  #fc-metrics{grid-template-columns:repeat(3,1fr) !important;}
 }
 </style>
 </head>
@@ -215,6 +294,61 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
     </button>
   </div>
   <div id="msgs"></div>
+
+  <!-- ── DỰ BÁO TĂNG TRƯỞNG ── -->
+  <div class="csec" style="margin-top:1.5rem;" id="forecast-section">
+    <div class="chdr" style="margin-bottom:16px;">
+      <span class="ctit">DỰ BÁO TĂNG TRƯỞNG 10 NĂM</span>
+      <button class="btn" onclick="syncFromPortfolio()" style="font-size:11px;padding:5px 12px;color:var(--gr);border-color:rgba(52,211,153,0.3);">
+        ↺ Đồng bộ từ danh mục
+      </button>
+    </div>
+
+    <!-- Kịch bản từng asset -->
+    <div id="fc-asset-scenarios" style="display:grid;gap:12px;margin-bottom:16px;"></div>
+
+    <!-- Thông số -->
+    <div class="fc-params-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div class="hfield" style="padding:14px 16px;">
+        <div class="sl" style="margin-bottom:8px;">VỐN BAN ĐẦU (USD)</div>
+        <div class="hinput-wrap">
+          <input class="hinput" type="number" id="fc-init" min="0" step="100" value="30000"
+            placeholder="30000" oninput="fcUpdateInit(+this.value||0)"
+            style="font-size:15px;font-weight:600;padding-right:48px;">
+          <span class="hunit">USD</span>
+        </div>
+      </div>
+      <div class="hfield" style="padding:14px 16px;">
+        <div class="sl" style="margin-bottom:8px;">DCA / THÁNG (USD)</div>
+        <div class="hinput-wrap">
+          <input class="hinput" type="number" id="fc-dca" min="0" step="50" value="0"
+            placeholder="0" oninput="fcUpdateDCA(+this.value||0)"
+            style="font-size:15px;font-weight:600;padding-right:48px;">
+          <span class="hunit">USD</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div id="fc-metrics" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;"></div>
+
+    <!-- Chart dự báo -->
+    <div style="position:relative;height:260px;margin-bottom:16px;">
+      <canvas id="fc-chart"></canvas>
+    </div>
+
+    <!-- Bảng năm -->
+    <div style="overflow-x:auto;">
+      <table id="fc-table" style="width:100%;border-collapse:collapse;font-size:11px;font-family:var(--mono);">
+        <thead id="fc-thead"></thead>
+        <tbody id="fc-tbody"></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:12px;padding:10px 14px;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);border-radius:10px;font-size:11px;color:#f87171;line-height:1.6;">
+      ⚠ Đây là mô phỏng dựa trên lãi suất giả định — không phải dự báo thực tế. Crypto và hàng hóa có biến động cực cao, kịch bản thực tế có thể khác đáng kể.
+    </div>
+  </div>
 </div>
 
 <!-- ── MODAL THÊM TÀI SẢN ── -->
@@ -691,7 +825,9 @@ function renderSummaryCards() {
   }).join('');
 
   const n = assets.length;
-  sub.style.gridTemplateColumns = n > 0 ? `repeat(${Math.min(n,3)},1fr)` : '1fr';
+  const isMobile = window.innerWidth <= 640;
+  const cols = isMobile ? Math.min(n, 2) : Math.min(n, 3);
+  sub.style.gridTemplateColumns = cols > 0 ? `repeat(${cols},1fr)` : '1fr';
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -998,6 +1134,8 @@ function addSelectedAsset() {
   closeModal();
   renderHoldings();
   recalc();
+  renderFcAssetScenarios();
+  fcUpdate();
   // fetch price for new asset
   fetchSingleAsset(assets.length-1);
 }
@@ -1033,8 +1171,15 @@ async function fetchSingleAsset(i) {
 
 function removeAsset(i) {
   assets.splice(i,1);
+  delete fcScenarios[i];
+  // Rebuild fcScenarios keys
+  const newSc = {};
+  Object.keys(fcScenarios).forEach(k => { if(+k < i) newSc[k]=fcScenarios[k]; else if(+k > i) newSc[+k-1]=fcScenarios[k]; });
+  Object.assign(fcScenarios, newSc);
   renderHoldings();
   recalc();
+  renderFcAssetScenarios();
+  fcUpdate();
   buildChart();
 }
 
@@ -1062,8 +1207,184 @@ function loadSaved() {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  INIT
+//  FORECAST ENGINE
 // ─────────────────────────────────────────────────────────────
+const FC_SCENARIOS = {
+  // ETF/Stock
+  stock:  { base:{r:0.10,l:'TB 10%'}, hist:{r:0.185,l:'Lịch sử 18.5%'}, bull:{r:0.15,l:'Lạc quan 15%'}, bear:{r:0.06,l:'Bi quan 6%'} },
+  // Crypto
+  crypto: { base:{r:0.30,l:'TB 30%'}, bull:{r:0.80,l:'Lạc quan 80%'}, bear:{r:-0.20,l:'Bi quan −20%'}, real:{r:0.20,l:'Thực tế 20%'} },
+  // Commodity
+  commodity:{ base:{r:0.086,l:'Lịch sử 8.6%'}, bull:{r:0.15,l:'Lạc quan 15%'}, bear:{r:0.03,l:'Bi quan 3%'}, mid:{r:0.10,l:'TB 10%'} },
+};
+const FC_YRS = 10;
+let fcInitAmt = 30000, fcDCA = 0;
+let fcScenarios = {}; // assetIndex → scenarioKey
+let fcChart2 = null;
+
+function fcFmt(n) {
+  if (Math.abs(n) >= 1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  if (Math.abs(n) >= 1000) return '$'+Math.round(n).toLocaleString('en-US');
+  return '$'+n.toFixed(0);
+}
+
+function fcCalcAsset(init, dca, rate) {
+  let v = init, res = [init];
+  for (let i = 0; i < FC_YRS; i++) { v = (v + dca*12) * (1+rate); res.push(Math.round(v)); }
+  return res;
+}
+
+function fcGetScenarios(type) {
+  return FC_SCENARIOS[type] || FC_SCENARIOS.stock;
+}
+
+function fcDefaultScenario(type) {
+  const s = fcGetScenarios(type);
+  return Object.keys(s)[0];
+}
+
+function renderFcAssetScenarios() {
+  const container = document.getElementById('fc-asset-scenarios');
+  if (!assets.length) { container.innerHTML = '<div style="color:var(--mu);font-size:12px;">Chưa có tài sản nào trong danh mục.</div>'; return; }
+  container.style.gridTemplateColumns = `repeat(${Math.min(assets.length,3)},1fr)`;
+  container.innerHTML = assets.map((a,i) => {
+    const scens = fcGetScenarios(a.type);
+    const cur = fcScenarios[i] || fcDefaultScenario(a.type);
+    const btns = Object.entries(scens).map(([k,v]) =>
+      `<button class="fc-sc-btn${cur===k?' active':''}" style="${cur===k?'background:'+a.color+';':''}"
+        onclick="fcSetScenario(${i},'${k}')">${v.l}</button>`
+    ).join('');
+    return `
+    <div class="hfield" style="padding:14px 16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div class="hico" style="background:${a.color}22;">${a.icon}</div>
+        <div><div style="font-size:12px;font-weight:500;">${a.name}</div><div style="font-size:10px;color:var(--mu);font-family:var(--mono);">${a.ticker}</div></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;">${btns}</div>
+    </div>`;
+  }).join('');
+}
+
+function fcSetScenario(i, key) {
+  fcScenarios[i] = key;
+  renderFcAssetScenarios();
+  fcUpdate();
+}
+
+function fcUpdateInit(v) {
+  fcInitAmt = v;
+  fcUpdate();
+}
+function fcUpdateDCA(v) {
+  fcDCA = v;
+  fcUpdate();
+}
+
+function syncFromPortfolio() {
+  const total = assets.reduce((s,a) => s + (a.price!=null ? a.price*(a.qty||0) : 0), 0);
+  if (total > 0) {
+    fcInitAmt = Math.round(total);
+    const el = document.getElementById('fc-init');
+    if (el) el.value = fcInitAmt;
+  }
+  fcUpdate();
+}
+
+function fcUpdate() {
+  if (!assets.length) return;
+  const startYear = new Date().getFullYear();
+  const labels = Array.from({length:FC_YRS+1},(_,i)=>String(startYear+i));
+
+  // Tính từng asset
+  const assetData = assets.map((a,i) => {
+    const scens = fcGetScenarios(a.type);
+    const key = fcScenarios[i] || fcDefaultScenario(a.type);
+    const rate = scens[key]?.r ?? 0.10;
+    // phân bổ theo % thực tế trong danh mục
+    const totalVal = assets.reduce((s,x) => s+(x.price!=null?x.price*(x.qty||0):0), 0);
+    const myVal = a.price!=null ? a.price*(a.qty||0) : 0;
+    const allocPct = totalVal > 0 ? myVal/totalVal : 1/assets.length;
+    const init = fcInitAmt * allocPct;
+    const dca  = fcDCA * allocPct;
+    return { a, key, rate, allocPct, series: fcCalcAsset(init, dca, rate) };
+  });
+
+  const total = assetData[0].series.map((_,i) => assetData.reduce((s,d)=>s+d.series[i],0));
+  const inv   = Array.from({length:FC_YRS+1},(_,i)=>Math.round(fcInitAmt+fcDCA*12*i));
+
+  // Metrics
+  const final = total[FC_YRS];
+  const invFinal = inv[FC_YRS];
+  const profit = final - invFinal;
+  const cagr = ((Math.pow(final/Math.max(fcInitAmt,1),1/FC_YRS)-1)*100).toFixed(1);
+  const multi = (final/Math.max(invFinal,1)).toFixed(2);
+
+  const metricsEl = document.getElementById('fc-metrics');
+  const cols = Math.min(assets.length+2, 4);
+  metricsEl.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+  metricsEl.innerHTML = [
+    { l:'Tổng sau '+FC_YRS+' năm', v:fcFmt(final), c:'var(--blue)' },
+    { l:'Lãi ròng', v:(profit>=0?'+':'')+fcFmt(profit), c:profit>=0?'var(--gr)':'var(--re)' },
+    { l:'CAGR danh mục', v:cagr+'%/năm', c:'var(--tx)' },
+    { l:'×lần vốn đầu tư', v:multi+'x', c:'var(--tx)' },
+    ...assetData.map(d=>({ l:d.a.ticker+' 2035', v:fcFmt(d.series[FC_YRS]), c:d.a.color })),
+  ].map(m=>`<div class="fc-metric"><div class="fc-ml">${m.l}</div><div class="fc-mv" style="color:${m.c}">${m.v}</div></div>`).join('');
+
+  // Chart
+  if (fcChart2) fcChart2.destroy();
+  const ctx2 = document.getElementById('fc-chart').getContext('2d');
+  const datasets = [
+    { label:'Tổng', data:total, borderColor:'var(--blue)', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'var(--blue)', backgroundColor:'rgba(79,142,247,0.07)', fill:true, tension:0.35 },
+    ...assetData.map(d=>({ label:d.a.ticker, data:d.series, borderColor:d.a.color, borderWidth:1.5, borderDash:[5,3], pointRadius:0, fill:false, tension:0.35 })),
+    { label:'Vốn', data:inv, borderColor:'rgba(255,255,255,0.2)', borderWidth:1.2, borderDash:[2,4], pointRadius:0, fill:false, tension:0.1 },
+  ];
+  fcChart2 = new Chart(ctx2, {
+    type:'line',
+    data:{ labels, datasets },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{ callbacks:{label:c=>' '+c.dataset.label+': '+fcFmt(c.parsed.y)}, backgroundColor:'#1c2030', titleColor:'#9ca3af', bodyColor:'#e8eaf0', borderColor:'rgba(255,255,255,.1)', borderWidth:1, padding:10 }
+      },
+      scales:{
+        y:{ grid:{color:'rgba(255,255,255,.05)'}, ticks:{color:'#6b7280',font:{size:10},callback:v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'M':'$'+Math.round(v/1000)+'K'} },
+        x:{ grid:{color:'rgba(255,255,255,.05)'}, ticks:{color:'#6b7280',font:{size:10},maxRotation:0} }
+      }
+    }
+  });
+
+  // Table header
+  const thead = document.getElementById('fc-thead');
+  thead.innerHTML = `<tr><th>Năm</th><th>Vốn tích lũy</th>${assetData.map(d=>`<th style="color:${d.a.color}">${d.a.ticker}</th>`).join('')}<th>Tổng</th><th>Lãi</th><th>×lần</th></tr>`;
+
+  // Table body
+  const tbody = document.getElementById('fc-tbody');
+  tbody.innerHTML = '';
+  for (let i=1; i<=FC_YRS; i++) {
+    const tot = total[i];
+    const profit_i = tot - inv[i];
+    const tr = document.createElement('tr');
+    if (i===FC_YRS) tr.classList.add('fc-hl');
+    tr.innerHTML = `
+      <td>${startYear+i}</td>
+      <td>${fcFmt(inv[i])}</td>
+      ${assetData.map(d=>`<td style="color:${d.a.color}">${fcFmt(d.series[i])}</td>`).join('')}
+      <td><strong>${fcFmt(tot)}</strong></td>
+      <td class="${profit_i>=0?'fc-pos':'fc-neg'}">${profit_i>=0?'+':''}${fcFmt(profit_i)}</td>
+      <td>${(tot/Math.max(inv[i],1)).toFixed(2)}x</td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+// Init forecast after assets load
+function initForecast() {
+  assets.forEach((_,i) => { if (!fcScenarios[i]) fcScenarios[i] = fcDefaultScenario(assets[i].type); });
+  renderFcAssetScenarios();
+  fcUpdate();
+}
+
 const hadSaved = loadSaved();
 if (!hadSaved) {
   // defaults
@@ -1075,7 +1396,14 @@ if (!hadSaved) {
 }
 renderHoldings();
 recalc();
-loadAll();
+loadAll().then(() => initForecast());
+
+// Re-render khi xoay màn hình
+window.addEventListener('resize', () => {
+  renderSummaryCards();
+  if (fcChart2) { fcChart2.resize(); }
+  if (C) { C.resize(); }
+});
 
 // Auto-refresh mỗi 60s: chỉ update giá, không reset DOM/qty
 async function silentRefresh() {
