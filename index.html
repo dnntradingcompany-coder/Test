@@ -312,8 +312,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
       <div class="hfield" style="padding:14px 16px;">
         <div class="sl" style="margin-bottom:8px;">VỐN BAN ĐẦU (USD)</div>
         <div class="hinput-wrap">
-          <input class="hinput" type="number" id="fc-init" min="0" step="100" value="30000"
-            placeholder="30000" oninput="fcUpdateInit(+this.value||0)"
+          <input class="hinput" type="text" id="fc-init" value="30,000"
+            placeholder="30,000" oninput="fcInputInit(this)"
             style="font-size:15px;font-weight:600;padding-right:48px;">
           <span class="hunit">USD</span>
         </div>
@@ -321,8 +321,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
       <div class="hfield" style="padding:14px 16px;">
         <div class="sl" style="margin-bottom:8px;">DCA / THÁNG (USD)</div>
         <div class="hinput-wrap">
-          <input class="hinput" type="number" id="fc-dca" min="0" step="50" value="0"
-            placeholder="0" oninput="fcUpdateDCA(+this.value||0)"
+          <input class="hinput" type="text" id="fc-dca" value="0"
+            placeholder="0" oninput="fcInputDCA(this)"
             style="font-size:15px;font-weight:600;padding-right:48px;">
           <span class="hunit">USD</span>
         </div>
@@ -457,6 +457,21 @@ const PALETTE = ['#4f8ef7','#8b6cf7','#f5a623','#34d399','#f87171','#60a5fa','#a
 let palIdx = 0;
 
 // ─────────────────────────────────────────────────────────────
+//  PRICE CACHE  (tránh rate limit 429)
+// ─────────────────────────────────────────────────────────────
+const PRICE_CACHE = {}; // key → { price, pct, ts }
+const CACHE_TTL = 3 * 60 * 1000; // 3 phút
+
+function cacheGet(key) {
+  const c = PRICE_CACHE[key];
+  if (c && Date.now() - c.ts < CACHE_TTL) return c;
+  return null;
+}
+function cacheSet(key, price, pct) {
+  PRICE_CACHE[key] = { price, pct, ts: Date.now() };
+}
+
+// ─────────────────────────────────────────────────────────────
 //  CORS / FETCH  (với timeout)
 // ─────────────────────────────────────────────────────────────
 const TIMEOUT_MS = 6000;
@@ -500,6 +515,8 @@ async function fetchTwelveData(symbol) {
 }
 
 async function fetchYahoo(symbol) {
+  const cached = cacheGet('yahoo:'+symbol);
+  if (cached) return { price: cached.price, pct: cached.pct, history: [] };
   const parseYahoo = d => {
     if (d?.chart?.result?.[0]) {
       const res = d.chart.result[0];
@@ -543,7 +560,11 @@ async function fetchYahoo(symbol) {
     return v;
   })());
 
-  try { return await Promise.any(allAttempts); }
+  try {
+    const result = await Promise.any(allAttempts);
+    cacheSet('yahoo:'+symbol, result.price, result.pct);
+    return result;
+  }
   catch(_) { throw new Error(`${symbol} không tải được`); }
 }
 
@@ -562,46 +583,54 @@ const CRYPTO_SYMBOLS = {
 };
 
 async function fetchOneCrypto(id) {
-  const sym = CRYPTO_SYMBOLS[id]?.cc || id.toUpperCase();
-  const bSym = CRYPTO_SYMBOLS[id]?.binance;
+  // Kiểm tra cache trước
+  const cached = cacheGet('crypto:'+id);
+  if (cached) return { id, current_price: cached.price, price_change_percentage_24h: cached.pct };
 
-  // Thử CoinGecko, CryptoCompare, Binance song song — lấy kết quả đầu tiên
+  const sym  = CRYPTO_SYMBOLS[id]?.cc || id.toUpperCase();
+  const bSym = CRYPTO_SYMBOLS[id]?.binance;
   const attempts = [];
 
-  // 1) CoinGecko qua proxy
-  attempts.push((async () => {
-    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}&price_change_percentage=24h`;
-    const data = await tryFetch(url);
-    if (Array.isArray(data) && data[0]?.current_price) return data[0];
-    throw new Error('no data');
-  })());
-
-  // 2) CryptoCompare
-  attempts.push((async () => {
-    const r = await fetchWithTimeout(`https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${sym}&tsyms=USD`);
-    if (!r.ok) throw new Error('not ok');
-    const d = await r.json();
-    const info = d?.RAW?.[sym]?.USD;
-    if (!info?.PRICE) throw new Error('no price');
-    return { id, current_price: info.PRICE, price_change_percentage_24h: info.CHANGEPCT24HOUR };
-  })());
-
-  // 3) Binance
+  // 1) Binance — không cần proxy, không bị rate limit, nhanh nhất
   if (bSym) {
     attempts.push((async () => {
       const r = await fetchWithTimeout(`https://api.binance.com/api/v3/ticker/24hr?symbol=${bSym}`);
       if (!r.ok) throw new Error('not ok');
       const d = await r.json();
       if (!d.lastPrice) throw new Error('no price');
-      return { id, current_price: parseFloat(d.lastPrice), price_change_percentage_24h: parseFloat(d.priceChangePercent) };
+      const result = { id, current_price: parseFloat(d.lastPrice), price_change_percentage_24h: parseFloat(d.priceChangePercent) };
+      cacheSet('crypto:'+id, result.current_price, result.price_change_percentage_24h);
+      return result;
     })());
   }
 
-  try {
-    return await Promise.any(attempts);
-  } catch(_) {
-    throw new Error(`${id} không tải được`);
-  }
+  // 2) CryptoCompare — trực tiếp, không proxy
+  attempts.push((async () => {
+    const r = await fetchWithTimeout(`https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${sym}&tsyms=USD`);
+    if (!r.ok) throw new Error('not ok');
+    const d = await r.json();
+    const info = d?.RAW?.[sym]?.USD;
+    if (!info?.PRICE) throw new Error('no price');
+    const result = { id, current_price: info.PRICE, price_change_percentage_24h: info.CHANGEPCT24HOUR };
+    cacheSet('crypto:'+id, result.current_price, result.price_change_percentage_24h);
+    return result;
+  })());
+
+  // 3) CoinGecko — chỉ dùng 1 proxy (không gọi nhiều cùng lúc)
+  attempts.push((async () => {
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd&include_24hr_change=true`;
+    const r = await fetchWithTimeout(`https://corsproxy.io/?${encodeURIComponent(url)}`);
+    if (!r.ok) throw new Error('not ok');
+    const d = await r.json();
+    const price = d?.[id]?.usd;
+    if (!price) throw new Error('no price');
+    const result = { id, current_price: price, price_change_percentage_24h: d[id]?.usd_24h_change ?? null };
+    cacheSet('crypto:'+id, result.current_price, result.price_change_percentage_24h);
+    return result;
+  })());
+
+  try { return await Promise.any(attempts); }
+  catch(_) { throw new Error(`${id} không tải được`); }
 }
 
 async function fetchCrypto(ids) {
@@ -690,6 +719,8 @@ const COMMODITY_MAP = {};
 COMMODITY_CATALOG.forEach(c => { COMMODITY_MAP[c.id] = c; });
 
 async function fetchCommodity(id) {
+  const cached = cacheGet('commodity:'+id);
+  if (cached) return { id, current_price: cached.price, price_change_percentage_24h: cached.pct };
   const meta = COMMODITY_MAP[id] || {};
   const attempts = [];
 
@@ -749,7 +780,11 @@ async function fetchCommodity(id) {
     })());
   }
 
-  try { return await Promise.any(attempts); }
+  try {
+    const result = await Promise.any(attempts);
+    cacheSet('commodity:'+id, result.current_price, result.price_change_percentage_24h);
+    return result;
+  }
   catch(_) { throw new Error(`${meta.ticker||id} không tải được`); }
 }
 
@@ -1271,21 +1306,32 @@ function fcSetScenario(i, key) {
   fcUpdate();
 }
 
-function fcUpdateInit(v) {
-  fcInitAmt = v;
-  fcUpdate();
+function fcFormatInput(el) {
+  const raw = el.value.replace(/,/g, '');
+  const num = parseFloat(raw);
+  if (!isNaN(num) && num >= 0) {
+    // Lưu vị trí con trỏ để không bị nhảy
+    const selStart = el.selectionStart;
+    const oldLen = el.value.length;
+    el.value = Math.round(num).toLocaleString('en-US');
+    const newLen = el.value.length;
+    el.setSelectionRange(selStart + (newLen - oldLen), selStart + (newLen - oldLen));
+    return Math.round(num);
+  }
+  return 0;
 }
-function fcUpdateDCA(v) {
-  fcDCA = v;
-  fcUpdate();
-}
+function fcInputInit(el) { fcInitAmt = fcFormatInput(el); fcUpdate(); }
+function fcInputDCA(el)  { fcDCA     = fcFormatInput(el); fcUpdate(); }
+
+function fcUpdateInit(v) { fcInitAmt = v; fcUpdate(); }
+function fcUpdateDCA(v)  { fcDCA = v; fcUpdate(); }
 
 function syncFromPortfolio() {
   const total = assets.reduce((s,a) => s + (a.price!=null ? a.price*(a.qty||0) : 0), 0);
   if (total > 0) {
     fcInitAmt = Math.round(total);
     const el = document.getElementById('fc-init');
-    if (el) el.value = fcInitAmt;
+    if (el) el.value = fcInitAmt.toLocaleString('en-US');
   }
   fcUpdate();
 }
@@ -1431,7 +1477,7 @@ async function silentRefresh() {
   buildChart();
   $('ut').textContent = 'cập nhật '+new Date().toLocaleTimeString('vi-VN');
 }
-setInterval(silentRefresh, 60000);
+setInterval(silentRefresh, 5 * 60 * 1000); // 5 phút
 </script>
 </body>
 </html>
