@@ -272,6 +272,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
       <div class="alloc-bar" id="alloc-bar"></div>
       <div class="alloc-labels" id="alloc-labels"></div>
     </div>
+    <div class="smry-sub" id="smry-sub" style="display:none;">
+      <!-- hidden but kept for JS compatibility -->
+    </div>
   </div>
 
   <!-- HOLDINGS -->
@@ -1575,6 +1578,7 @@ function renderHoldings() {
 // ─────────────────────────────────────────────────────────────
 function renderSummaryCards() {
   const sub = $('smry-sub');
+  if (!sub) return;
   const vals = assets.map((a,i)=>getAssetValue(a,i));
   const total = vals.reduce((s,v)=>s+v,0);
 
