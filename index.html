@@ -304,9 +304,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
   <div class="csec" style="margin-top:1.5rem;" id="forecast-section">
     <div class="chdr" style="margin-bottom:16px;">
       <span class="ctit" data-i18n="forecastTitle">DỰ BÁO TĂNG TRƯỞNG 3 NĂM</span>
-      <button class="btn" onclick="syncFromPortfolio()" style="font-size:11px;padding:5px 12px;color:var(--gr);border-color:rgba(52,211,153,0.3);">
-        ↺ <span data-i18n="syncPortfolio">Đồng bộ từ danh mục</span>
-      </button>
+      <span style="font-size:10px;color:var(--gr);font-family:var(--mono);">↻ auto-sync</span>
     </div>
 
     <!-- Kịch bản từng asset -->
@@ -1701,6 +1699,16 @@ function recalc() {
   }
 
   renderSummaryCards();
+
+  // Auto-sync vốn ban đầu cho dự báo tăng trưởng
+  const newTotal = assets.reduce((s,a,i) => s + getAssetValue(a,i), 0);
+  if (newTotal > 0 && Math.round(newTotal) !== fcInitAmt) {
+    fcInitAmt = Math.round(newTotal);
+    const fcEl = document.getElementById('fc-init');
+    if (fcEl) fcEl.value = fmtNum(fcInitAmt, 0);
+    if (typeof fcUpdate === 'function') fcUpdate();
+  }
+
   saveAll();
 }
 
