@@ -4179,16 +4179,10 @@ ${aiSection}
     <!-- Captured image preview -->
     <div id="sc-capture-preview" style="margin-bottom:18px;min-height:80px;"></div>
     <!-- Actions -->
-    <div style="display:flex;gap:10px;">
-    <button onclick="shareTo('download')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:10px;border:1px solid rgba(79,142,247,0.3);background:rgba(79,142,247,0.1);color:#4f8ef7;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);">
+    <button onclick="shareTo('download')" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:10px;border:1px solid rgba(79,142,247,0.3);background:rgba(79,142,247,0.1);color:#4f8ef7;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       <span id="share-download-label" data-i18n="shareDownloadBtn">Tải ảnh về</span>
     </button>
-    <button id="copy-link-btn" onclick="copyShareLink()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:10px;border:1px solid rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);color:#34d399;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-      <span id="share-copy-label" data-i18n="shareCopyBtn">Sao chép link</span>
-    </button>
-    </div>
 
 <script>
 let _shareBlob = null;
@@ -4263,14 +4257,17 @@ function buildPortfolioCanvasEl() {
 
     // AI badge
     const aiX = liveX + 74;
-    rr(aiX, hY+4, 96, 26, 13);
+    const aiBadgeText = '✦ ' + (t('aiBtn') || 'AI Advisor');
+    ctx.font='bold 11px Arial,sans-serif';
+    const aiBadgeW = Math.max(96, ctx.measureText(aiBadgeText).width + 24);
+    rr(aiX, hY+4, aiBadgeW, 26, 13);
     ctx.fillStyle='rgba(139,108,247,0.12)'; ctx.fill();
     ctx.strokeStyle='rgba(139,108,247,0.4)'; ctx.lineWidth=1; ctx.stroke();
     ctx.fillStyle='#a78bfa'; ctx.font='bold 11px Arial,sans-serif';
-    ctx.fillText('* AI Tu van', aiX+12, hY+21);
+    ctx.fillText(aiBadgeText, aiX+12, hY+21);
 
     // wealthos.world badge
-    const wwX = aiX + 106;
+    const wwX = aiX + aiBadgeW + 10;
     rr(wwX, hY+4, 120, 26, 13);
     ctx.fillStyle='rgba(255,255,255,0.05)'; ctx.fill();
     ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1; ctx.stroke();
