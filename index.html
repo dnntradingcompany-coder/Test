@@ -33,6 +33,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 .btn{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;border:1px solid var(--b2);background:var(--sur);color:var(--mu);font-size:12px;cursor:pointer;font-family:var(--sans);transition:all .2s;}
 .btn:hover{background:var(--sur2);color:var(--tx);}
 .btn:disabled{opacity:.5;cursor:not-allowed;}
+.hbtn{font-size:12px;padding:5px 12px;white-space:nowrap;}
 .btn-add{border-color:rgba(52,211,153,0.3);color:var(--gr);}
 .btn-add:hover{background:rgba(52,211,153,0.06);color:var(--gr);}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -128,6 +129,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 .lang-opt{padding:7px 12px;border-radius:7px;font-size:12px;cursor:pointer;color:var(--mu);transition:all .15s;white-space:nowrap;}
 .lang-opt:hover{background:var(--sur2);color:var(--tx);}
 .lang-opt.active{color:var(--tx);font-weight:600;background:var(--sur2);}
+/* Hide number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input[type=number]{-moz-appearance:textfield;}
 .mbtn-primary:hover{opacity:.88;}
 .modal-err{font-size:11px;color:var(--re);margin-bottom:10px;display:none;}
 
@@ -156,25 +161,25 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 .fc-metric-hero{
   border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;
   display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-  border:1px solid rgba(79,142,247,0.3);
-  background:linear-gradient(135deg,#141928 0%,#0d1222 100%);
-  box-shadow:0 0 28px rgba(79,142,247,0.1);
+  border:1px solid rgba(255,255,255,0.1);
+  background:linear-gradient(135deg,#181d2a 0%,#111520 100%);
+  box-shadow:none;
 }
 .fc-metric-hero.profit{
-  border-color:rgba(52,211,153,0.3);
-  background:linear-gradient(135deg,#0e1f1a 0%,#0a1510 100%);
-  box-shadow:0 0 28px rgba(52,211,153,0.1);
+  border-color:rgba(255,255,255,0.1);
+  background:linear-gradient(135deg,#181d2a 0%,#111520 100%);
+  box-shadow:none;
 }
 .fc-metric-hero.neutral{
   border-color:rgba(255,255,255,0.1);
   background:linear-gradient(135deg,#181d2a 0%,#111520 100%);
   box-shadow:none;
 }
-.fc-metric-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(79,142,247,0.12) 0%,transparent 70%);pointer-events:none;}
-.fc-metric-hero.profit::before{background:radial-gradient(circle,rgba(52,211,153,0.12) 0%,transparent 70%);}
+.fc-metric-hero::before{content:'';display:none;}
+.fc-metric-hero.profit::before{display:none;}
 .fc-metric-hero.neutral::before{background:none;}
 .fc-metric-hero .fc-ml{font-size:9px;color:var(--mu);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
-.fc-metric-hero .fc-mv{font-size:22px;font-weight:700;font-family:var(--mono);letter-spacing:-0.5px;line-height:1.1;text-align:center;}
+.fc-metric-hero .fc-mv{font-size:22px;font-weight:700;font-family:var(--mono);letter-spacing:-0.5px;line-height:1.1;text-align:center;color:var(--tx) !important;}
 /* Sub-metrics row (CAGR, multiple, per-asset) */
 #fc-metrics-sub{display:grid;gap:8px;margin-bottom:16px;}
 #fc-metrics-sub .fc-metric{text-align:center;}
@@ -195,12 +200,16 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 @media(max-width:640px){
   /* Layout */
   .app{padding:1rem 0.85rem;}
-  .header{margin-bottom:1.25rem;flex-wrap:wrap;gap:8px;}
-  .ttl{font-size:11px;}
-  .logo{font-size:17px;letter-spacing:3px;}
-  .hright{gap:6px;}
-  .live{padding:4px 8px;font-size:10px;}
-  .btn{padding:5px 10px;font-size:11px;}
+  .header{margin-bottom:1.25rem;flex-wrap:nowrap;gap:6px;align-items:center;}
+  .ttl{display:none;}
+  .logo{font-size:15px;letter-spacing:2px;}
+  .hright{gap:5px;flex-shrink:0;}
+  .live{padding:5px 8px;font-size:10px;}
+  .live .btn-label{display:none;}
+  /* Icon-only buttons on mobile */
+  .hbtn{padding:6px 8px !important;font-size:11px;}
+  .hbtn .btn-label{display:none;}
+  #refresh-countdown{display:none !important;}
 
   /* Tổng danh mục */
   .sc-total{padding:16px 18px;}
@@ -318,17 +327,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
       <div class="ttl" data-i18n="title">Nền tảng quản trị tài sản thông minh.</div>
     </div>
     <div class="hright">
-      <div class="live"><span class="dot"></span>LIVE</div>
-      <button class="btn" id="ai-btn" onclick="openAIAdvisor()" style="font-size:12px;padding:5px 12px;color:#a78bfa;border-color:rgba(167,139,250,0.35);background:rgba(167,139,250,0.06);">
-        ✦ <span>AI Tư vấn</span>
+      <div class="live"><span class="dot"></span><span class="btn-label">LIVE</span></div>
+      <button class="btn hbtn" id="ai-btn" onclick="openAIAdvisor()" style="color:#a78bfa;border-color:rgba(167,139,250,0.35);background:rgba(167,139,250,0.06);">
+        <span>✦</span><span class="btn-label" data-i18n="aiAdvisorBtn">AI Advisor</span>
       </button>
-      <button class="btn" onclick="openShareModal()" style="font-size:12px;padding:5px 12px;color:#34d399;border-color:rgba(52,211,153,0.35);background:rgba(52,211,153,0.06);" data-i18n-btn="share">
+      <button class="btn hbtn" onclick="openShareModal()" style="color:#34d399;border-color:rgba(52,211,153,0.35);background:rgba(52,211,153,0.06);">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        <span data-i18n="shareBtn">Chia sẻ</span>
+        <span class="btn-label" data-i18n="shareBtn">Chia sẻ</span>
       </button>
       <div style="position:relative;display:inline-block;" id="lang-dropdown-wrap">
-        <button class="btn" id="lang-btn" onclick="toggleLangDropdown()" style="font-size:12px;padding:5px 10px;letter-spacing:.5px;gap:4px;">
-          <span id="lang-flag">🇻🇳</span><span id="lang-code" style="font-size:11px;">VI</span>
+        <button class="btn hbtn" id="lang-btn" onclick="toggleLangDropdown()" style="gap:4px;">
+          <span id="lang-flag">🇻🇳</span><span id="lang-code" class="btn-label" style="font-size:11px;">VI</span>
           <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div id="lang-menu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--sur);border:1px solid var(--b2);border-radius:10px;padding:5px;min-width:150px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,0.45);">
@@ -341,10 +350,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
           <div class="lang-opt" data-lang="ru"  onclick="setLang('ru')">🇷🇺 Русский</div>
         </div>
       </div>
-      <button class="btn" id="rbtn" onclick="loadAll()" style="gap:6px;">
+      <button class="btn hbtn" id="rbtn" onclick="loadAll()" style="gap:5px;">
         <svg id="rico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        <span data-i18n="refresh">Làm mới</span>
-        <span id="refresh-countdown" style="font-size:10px;color:var(--mu);font-family:var(--mono);opacity:0.7;">60s</span>
+        <span class="btn-label" data-i18n="refresh">Làm mới</span>
+        <span id="refresh-countdown" class="btn-label" style="font-size:10px;color:var(--mu);font-family:var(--mono);opacity:0.7;">60s</span>
       </button>
     </div>
   </div>
@@ -791,7 +800,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 const LANG = {
   vi: {
     logo:'WEALTHOS', title:'Nền tảng quản trị tài sản thông minh.',
-    refresh:'Làm mới', addAsset:'Thêm tài sản', holdingsTitle:'GIÁ TRỊ CÁC LOẠI TÀI SẢN', assetValTitle:'GIÁ TRỊ TỪNG LOẠI TÀI SẢN', shareBtn:'Chia sẻ',
+    refresh:'Làm mới', addAsset:'Thêm tài sản', holdingsTitle:'GIÁ TRỊ CÁC LOẠI TÀI SẢN', assetValTitle:'GIÁ TRỊ TỪNG LOẠI TÀI SẢN', shareBtn:'Chia sẻ', aiAdvisorBtn:'AI Advisor',
     totalPortfolio:'TỔNG DANH MỤC (USD)', byQty:'theo khối lượng nhập',
     chart7d:'BIẾN ĐỘNG 7 NGÀY (chỉ số hóa, ngày đầu = 100)',
     source:'Nguồn', loading:'đang tải...', updatedAt:'cập nhật',
@@ -824,7 +833,7 @@ const LANG = {
     enterQty:'nhập khối lượng', enterValue:'nhập giá trị', loading2:'đang tải...',
     noPrice:'Không tải được giá tự động', manualPrice:'Nhập giá thủ công', retry:'↻', price:'Giá',
     perYear:'/năm', savingsRate:'Lãi suất/năm', growthRate:'Tăng trưởng/năm',
-    perYearShort:'%/năm',
+    perYearShort:'%/năm', perYrLabel:'%/năm',
     currUSD:'USD – Đô la Mỹ', currVND:'VND – Đồng Việt Nam', currEUR:'EUR – Euro',
     currSGD:'SGD – Đô la Singapore', currJPY:'JPY – Yên Nhật',
     reHintText:'Tăng trưởng ước tính:', reHintSuffix:'lịch sử TP.HCM',
@@ -886,7 +895,7 @@ const LANG = {
   },
   en: {
     logo:'WEALTHOS', title:'AI Net Worth & Portfolio Tracker',
-    refresh:'Refresh', addAsset:'Add Asset', holdingsTitle:'ASSET VALUES', assetValTitle:'ASSET VALUES BY TYPE', shareBtn:'Share',
+    refresh:'Refresh', addAsset:'Add Asset', holdingsTitle:'ASSET VALUES', assetValTitle:'ASSET VALUES BY TYPE', shareBtn:'Share', aiAdvisorBtn:'AI Advisor',
     totalPortfolio:'TOTAL PORTFOLIO (USD)', byQty:'enter quantities below',
     chart7d:'7-DAY PERFORMANCE (indexed, day 1 = 100)',
     source:'Source', loading:'loading...', updatedAt:'updated',
@@ -919,7 +928,7 @@ const LANG = {
     enterQty:'enter quantity', enterValue:'enter value', loading2:'loading...',
     noPrice:'Could not load price automatically', manualPrice:'Enter price manually', retry:'↻', price:'Price',
     perYear:'/yr', savingsRate:'Interest rate/yr', growthRate:'Growth rate/yr',
-    perYearShort:'%/yr',
+    perYearShort:'%/yr', perYrLabel:'%/yr',
     currUSD:'USD – US Dollar', currVND:'VND – Vietnamese Dong', currEUR:'EUR – Euro',
     currSGD:'SGD – Singapore Dollar', currJPY:'JPY – Japanese Yen',
     reHintText:'Estimated growth:', reHintSuffix:'historical HCMC',
@@ -981,7 +990,7 @@ const LANG = {
   },
   zh: {
     logo:'WEALTHOS', title:'AI 净资产与投资组合追踪器',
-    refresh:'刷新', addAsset:'添加资产', holdingsTitle:'资产价值', assetValTitle:'各类资产价值', shareBtn:'分享',
+    refresh:'刷新', addAsset:'添加资产', holdingsTitle:'资产价值', assetValTitle:'各类资产价值', shareBtn:'分享', aiAdvisorBtn:'AI 顾问',
     totalPortfolio:'投资组合总值 (USD)', byQty:'请输入持仓数量',
     chart7d:'7天表现（指数化，第1天=100）',
     source:'数据来源', loading:'加载中...', updatedAt:'更新于',
@@ -1072,7 +1081,7 @@ const LANG = {
   },
   ja: {
     logo:'WEALTHOS', title:'AI 純資産・ポートフォリオ管理',
-    refresh:'更新', addAsset:'資産を追加', holdingsTitle:'資産価値', assetValTitle:'種類別資産価値', shareBtn:'共有',
+    refresh:'更新', addAsset:'資産を追加', holdingsTitle:'資産価値', assetValTitle:'種類別資産価値', shareBtn:'共有', aiAdvisorBtn:'AI アドバイザー',
     totalPortfolio:'ポートフォリオ合計 (USD)', byQty:'保有数量を入力してください',
     chart7d:'7日間パフォーマンス（指数化、初日=100）',
     source:'データソース', loading:'読込中...', updatedAt:'更新',
@@ -1161,7 +1170,7 @@ const LANG = {
   },
   ko: {
     logo:'WEALTHOS', title:'AI 순자산 & 포트폴리오 추적기',
-    refresh:'새로고침', addAsset:'자산 추가', holdingsTitle:'자산 가치', assetValTitle:'유형별 자산 가치', shareBtn:'공유',
+    refresh:'새로고침', addAsset:'자산 추가', holdingsTitle:'자산 가치', assetValTitle:'유형별 자산 가치', shareBtn:'공유', aiAdvisorBtn:'AI 어드바이저',
     totalPortfolio:'포트폴리오 합계 (USD)', byQty:'보유 수량을 입력하세요',
     chart7d:'7일 성과 (지수화, 1일차=100)',
     source:'데이터 출처', loading:'불러오는 중...', updatedAt:'업데이트',
@@ -1250,7 +1259,7 @@ const LANG = {
   },
   fr: {
     logo:'WEALTHOS', title:'Suivi IA de patrimoine et portefeuille',
-    refresh:'Actualiser', addAsset:'Ajouter un actif', holdingsTitle:'VALEUR DES ACTIFS', assetValTitle:'VALEUR PAR TYPE', shareBtn:'Partager',
+    refresh:'Actualiser', addAsset:'Ajouter un actif', holdingsTitle:'VALEUR DES ACTIFS', assetValTitle:'VALEUR PAR TYPE', shareBtn:'Partager', aiAdvisorBtn:'Conseiller IA',
     totalPortfolio:'PORTEFEUILLE TOTAL (USD)', byQty:'entrez les quantités ci-dessous',
     chart7d:'PERFORMANCE 7 JOURS (indexé, jour 1 = 100)',
     source:'Source', loading:'chargement...', updatedAt:'mis à jour',
@@ -1339,7 +1348,7 @@ const LANG = {
   },
   ru: {
     logo:'WEALTHOS', title:'ИИ-трекер активов и портфеля',
-    refresh:'Обновить', addAsset:'Добавить актив', holdingsTitle:'СТОИМОСТЬ АКТИВОВ', assetValTitle:'СТОИМОСТЬ ПО ТИПАМ', shareBtn:'Поделиться',
+    refresh:'Обновить', addAsset:'Добавить актив', holdingsTitle:'СТОИМОСТЬ АКТИВОВ', assetValTitle:'СТОИМОСТЬ ПО ТИПАМ', shareBtn:'Поделиться', aiAdvisorBtn:'ИИ Советник',
     totalPortfolio:'ИТОГО ПОРТФЕЛЬ (USD)', byQty:'введите количество активов',
     chart7d:'ДИНАМИКА ЗА 7 ДНЕЙ (индексировано, день 1 = 100)',
     source:'Источник', loading:'загрузка...', updatedAt:'обновлено',
@@ -1649,7 +1658,7 @@ const usd = (n, d=2) => '$' + Number(n).toLocaleString('en-US', {minimumFraction
 const big = n => !n ? '—' : n>=1e9 ? '$'+(n/1e9).toFixed(2)+'B' : n>=1e6 ? '$'+(n/1e6).toFixed(1)+'M' : '$'+Number(n).toLocaleString();
 const norm = arr => { if(!arr?.length) return []; const b=arr[0]; return arr.map(v=>+(v/b*100).toFixed(2)); };
 const fmtChg = pct => pct==null ? '' : (pct>=0?'▲ +':'▼ ')+Math.abs(pct).toFixed(2)+'% (24h)';
-const qty = id => { const el = $(id); if(!el) return 0; const raw = String(el.value).replace(/,/g,''); return Math.max(0, parseFloat(raw)||0); };
+const qty = id => { const el = $(id); if(!el) return 0; let raw = String(el.value).trim(); if(!raw) return 0; const dots = (raw.match(/\./g)||[]).length, commas = (raw.match(/,/g)||[]).length; if(commas===1 && dots===0) raw=raw.replace(',','.'); else raw=raw.replace(/,/g,''); return Math.max(0, parseFloat(raw)||0); };
 
 // Format số cho input: luôn dùng dấu phẩy phân cách nghìn, dấu chấm thập phân
 function fmtNum(n, maxDec=8) {
@@ -1662,6 +1671,9 @@ function fmtNum(n, maxDec=8) {
 }
 function fmtQtyInput(el) {
   const cur = el.selectionStart;
+  // Strip any character that's not a digit, dot, or comma (handles iOS paste etc.)
+  const cleaned = el.value.replace(/[^0-9.,]/g, '');
+  if (cleaned !== el.value) { el.value = cleaned; }
   const oldVal = el.value;
   const raw = oldVal.replace(/,/g, '');
   if (raw === '' || raw === '.') return;
@@ -2265,11 +2277,11 @@ function renderHoldings() {
       valBlock = `<div class="hval-price" id="price-${i}" style="color:var(--mu)">${t('noPrice')}</div>
                   <div class="manual-price-row">
                     <div class="hinput-wrap" style="flex:1">
-                      <input class="hinput" id="mprice-${i}" type="text" inputmode="decimal"
+                      <input class="hinput" id="mprice-${i}" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"
+                        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                         placeholder="${t('manualPrice')}"
-                        value="${a.manualPrice ? fmtNum(a.manualPrice, 2) : ''}"
-                        oninput="fmtQtyInput(this);setManualPrice(${i},this.value)"
-                        onkeypress="return /[0-9.,]/.test(event.key)"
+                        value="${a.manualPrice || ''}"
+                        oninput="setManualPrice(${i},this.value)"
                         style="font-size:12px;padding:6px 10px;">
                       <span class="hunit" style="font-size:9px">USD</span>
                     </div>
@@ -2301,11 +2313,11 @@ function renderHoldings() {
       <div style="margin-top:10px;padding:10px 10px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;">
         <div style="font-size:10px;letter-spacing:1px;color:var(--mu);margin-bottom:8px;font-family:var(--mono);">✏ ${isCash ? t('balanceLabel') : isRE ? t('propertyLabel') : isOther ? t('assetValLabel') : t('qtyLabel')}</div>
         <div class="hinput-wrap">
-          <input class="hinput" id="qty-${i}" type="text" inputmode="decimal"
+          <input class="hinput" id="qty-${i}" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"
+            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             placeholder="${qtyPlaceholder}"
-            value="${a.qty ? fmtNum(a.qty) : ''}"
-            oninput="fmtQtyInput(this);onQtyChange(${i})"
-            onkeypress="return /[0-9.,]/.test(event.key)">
+            value="${a.qty || ''}"
+            oninput="onQtyChange(${i})">
           <span class="hunit">${qtyLabel}</span>
         </div>
         ${extraField}
@@ -3038,21 +3050,21 @@ function fcUpdate() {
   // Hero metrics — all 4 in same row, same size
   const heroEl = document.getElementById('fc-metrics-hero');
   heroEl.innerHTML = `
-    <div class="fc-metric-hero">
+    <div class="fc-metric-hero neutral">
       <div class="fc-ml">${t('fcTotalAfter')} ${FC_YRS} ${t('fcYears')}</div>
-      <div class="fc-mv" style="color:var(--blue)">${fcFmt(final)}</div>
+      <div class="fc-mv">${fcFmt(final)}</div>
     </div>
-    <div class="fc-metric-hero profit">
+    <div class="fc-metric-hero neutral">
       <div class="fc-ml">${t('fcNetProfit')}</div>
-      <div class="fc-mv" style="color:${profit>=0?'var(--gr)':'var(--re)'}">${(profit>=0?'+':'')+fcFmt(profit)}</div>
+      <div class="fc-mv">${(profit>=0?'+':'')+fcFmt(profit)}</div>
     </div>
     <div class="fc-metric-hero neutral">
       <div class="fc-ml">${t('fcCAGR')}</div>
-      <div class="fc-mv" style="color:var(--tx)">${cagr}%/${t('perYear').replace('/','')}</div>
+      <div class="fc-mv">${cagr}${t('perYrLabel')||'%/yr'}</div>
     </div>
     <div class="fc-metric-hero neutral">
       <div class="fc-ml">${t('fcMultipleInv')}</div>
-      <div class="fc-mv" style="color:var(--tx)">${multi}x</div>
+      <div class="fc-mv">${multi}x</div>
     </div>`;
 
   // Per-asset sub-row only
@@ -3065,9 +3077,9 @@ function fcUpdate() {
   // Keep hidden #fc-metrics in sync for PDF export
   const metricsEl = document.getElementById('fc-metrics');
   metricsEl.innerHTML = [
-    { l:t('fcTotalAfter')+' '+FC_YRS+' '+t('fcYears'), v:fcFmt(final), c:'var(--blue)' },
-    { l:t('fcNetProfit'), v:(profit>=0?'+':'')+fcFmt(profit), c:profit>=0?'var(--gr)':'var(--re)' },
-    { l:t('fcCAGR'), v:cagr+'%/'+t('perYear').replace('/',''), c:'var(--tx)' },
+    { l:t('fcTotalAfter')+' '+FC_YRS+' '+t('fcYears'), v:fcFmt(final), c:'var(--tx)' },
+    { l:t('fcNetProfit'), v:(profit>=0?'+':'')+fcFmt(profit), c:'var(--tx)' },
+    { l:t('fcCAGR'), v:cagr+(t('perYrLabel')||'%/yr'), c:'var(--tx)' },
     { l:t('fcMultipleInv'), v:multi+'x', c:'var(--tx)' },
   ].map(m=>`<div class="fc-metric"><div class="fc-ml">${m.l}</div><div class="fc-mv" style="color:${m.c}">${m.v}</div></div>`).join('');
 
@@ -3934,8 +3946,8 @@ function pmUpdate() {
   const cagr = pmYears > 0 ? ((Math.pow(final/Math.max(initAmt,1),1/pmYears)-1)*100).toFixed(1) : 0;
   const multi = (final/Math.max(initAmt,1)).toFixed(2);
   const pmMetricsData = [
-    { l:`${t('pmAfter')} ${pmYears} ${t('pmYearsUnit')}`, v:'$'+Math.round(final).toLocaleString(), c:'var(--blue)', cls:'' },
-    { l:t('pmProfit'), v:(profit>=0?'+':'')+'$'+Math.round(profit).toLocaleString(), c:profit>=0?'var(--gr)':'var(--re)', cls:'profit' },
+    { l:`${t('pmAfter')} ${pmYears} ${t('pmYearsUnit')}`, v:'$'+Math.round(final).toLocaleString(), c:'var(--tx)', cls:'' },
+    { l:t('pmProfit'), v:(profit>=0?'+':'')+'$'+Math.round(profit).toLocaleString(), c:'var(--tx)', cls:'profit' },
     { l:t('pmCAGR'), v:cagr+(t('perYrLabel')||'%/yr'), c:'var(--tx)', cls:'neutral' },
     { l:t('fcMultipleInv'), v:multi+'x', c:'var(--tx)', cls:'neutral' },
   ];
