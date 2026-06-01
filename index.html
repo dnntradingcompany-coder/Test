@@ -960,8 +960,12 @@ const LANG = {
   }
 };
 
-let currentLang = localStorage.getItem('lang') || 'vi';
-const t = key => LANG[currentLang][key] || LANG.vi[key] || key;
+let currentLang = (['vi','en'].includes(localStorage.getItem('lang'))) ? localStorage.getItem('lang') : 'vi';
+const t = key => {
+  try {
+    return (LANG[currentLang] && LANG[currentLang][key]) || (LANG.vi && LANG.vi[key]) || key;
+  } catch(e) { return key; }
+};
 
 function applyLang() {
   // Static elements với data-i18n
@@ -3696,19 +3700,10 @@ ${aiSection}
     </div>
     <!-- Captured image preview -->
     <div id="sc-capture-preview" style="margin-bottom:18px;min-height:80px;"></div>
-    <!-- Native share (mobile) -->
-    <button id="native-share-btn" onclick="shareTo('native')" style="display:none;width:100%;padding:13px;border-radius:10px;border:1px solid rgba(52,211,153,0.3);background:rgba(52,211,153,0.1);color:#34d399;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;font-family:var(--sans);">
-      📤 Chia sẻ ngay (iOS / Android)
-    </button>
     <!-- Actions -->
-    <div style="display:flex;gap:8px;">
-      <button onclick="shareTo('download')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:10px;border:1px solid rgba(79,142,247,0.3);background:rgba(79,142,247,0.1);color:#4f8ef7;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Tải ảnh về
-      </button>
-      <button id="copy-link-btn" onclick="copyShareLink()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:10px;border:1px solid rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);color:#34d399;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Sao chép link
+    <button onclick="shareTo('download')" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:10px;border:1px solid rgba(79,142,247,0.3);background:rgba(79,142,247,0.1);color:#4f8ef7;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Tải ảnh về
 
 <script>
 let _shareBlob = null;
@@ -3717,30 +3712,121 @@ let _shareDataUrl = null;
 async function openShareModal() {
   const modal = document.getElementById('share-modal');
   modal.style.display = 'flex';
-  if (navigator.share) document.getElementById('native-share-btn').style.display = 'block';
+  if (navigator.share) document.getElementById('native-share-btn')?.style && (document.getElementById('native-share-btn').style.display = 'block');
 
   const preview = document.getElementById('sc-capture-preview');
-  preview.innerHTML = '<div style="text-align:center;padding:24px;color:var(--mu);font-size:11px;font-family:var(--mono);">📸 Đang chụp ảnh danh mục...</div>';
+  preview.innerHTML = '<div style="text-align:center;padding:24px;color:#6b7280;font-size:11px;font-family:monospace;">📸 Đang tạo ảnh...</div>';
   _shareBlob = null; _shareDataUrl = null;
 
-  const el = document.querySelector('.smry');
-  if (!el || typeof html2canvas === 'undefined') {
-    preview.innerHTML = '<div style="color:#f87171;text-align:center;padding:16px;font-size:11px;">⚠ Không thể chụp ảnh</div>';
-    return;
-  }
   try {
-    const canvas = await html2canvas(el, {
-      backgroundColor: '#0d0f14', scale: 2, useCORS: true, logging: false,
-      width: el.offsetWidth, height: el.offsetHeight,
-    });
+    const canvas = buildPortfolioCanvasEl();
     _shareDataUrl = canvas.toDataURL('image/png');
-    preview.innerHTML = `<div style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);position:relative;">
-      <img src="${_shareDataUrl}" style="width:100%;display:block;border-radius:10px;" />
-      <div style="position:absolute;bottom:6px;right:8px;font-size:9px;color:rgba(255,255,255,0.6);font-family:var(--mono);background:rgba(0,0,0,0.55);padding:2px 7px;border-radius:4px;">wealthos.world</div>
+    if (!_shareDataUrl || _shareDataUrl === 'data:,') throw new Error('empty canvas');
+    preview.innerHTML = `<div style="border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);">
+      <img src="${_shareDataUrl}" style="width:100%;display:block;" />
     </div>`;
     canvas.toBlob(b => { _shareBlob = b; }, 'image/png');
   } catch(e) {
-    preview.innerHTML = '<div style="color:#f87171;text-align:center;padding:16px;font-size:11px;">⚠ Không thể chụp ảnh. Dùng Sao chép.</div>';
+    preview.innerHTML = `<div style="color:#f87171;text-align:center;padding:16px;font-size:11px;">⚠ Lỗi: ${e.message}</div>`;
+    console.error('Share canvas error:', e);
+  }
+}
+
+function buildPortfolioCanvasEl() {
+  try {
+    const W = 900, H = 280, DPR = 2;
+    const canvas = document.createElement('canvas');
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('no 2d context');
+    ctx.scale(DPR, DPR);
+
+    const rr = (x, y, w, h, r) => {
+      r = Math.min(r, w/2, h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+      ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+      ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+      ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+      ctx.closePath();
+    };
+
+    ctx.fillStyle = '#0d0f14';
+    ctx.fillRect(0, 0, W, H);
+
+    const cx=16,cy=16,cw=W-32,ch=H-32;
+    rr(cx,cy,cw,ch,14);
+    const g=ctx.createLinearGradient(cx,cy,cx+cw,cy+ch);
+    g.addColorStop(0,'#141928'); g.addColorStop(1,'#0d1222');
+    ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle='rgba(79,142,247,0.35)'; ctx.lineWidth=1.5; ctx.stroke();
+
+    // Badge
+    rr(cx+18,cy+14,132,22,5);
+    ctx.fillStyle='rgba(139,108,247,0.2)'; ctx.fill();
+    ctx.fillStyle='#a78bfa'; ctx.font='bold 11px monospace';
+    ctx.fillText('* WEALTHOS', cx+28, cy+29);
+
+    // Total
+    const s0el = document.getElementById('s0');
+    const total = s0el ? s0el.textContent.trim() : '$0.00';
+    ctx.fillStyle='#ffffff'; ctx.font='bold 44px Arial,sans-serif';
+    ctx.fillText(total, cx+18, cy+86);
+
+    // Change
+    const s0cel = document.getElementById('s0c');
+    const ch2 = s0cel ? s0cel.textContent.trim() : '';
+    if (ch2) {
+      ctx.fillStyle = (ch2.includes('+') || ch2.includes('▲')) ? '#34d399' : '#f87171';
+      ctx.font='500 14px Arial,sans-serif';
+      ctx.fillText(ch2, cx+20, cy+110);
+    }
+
+    // Alloc bar
+    const bY=cy+128, bH=7, bX=cx+18, bW=cw-36;
+    const assetList = typeof assets !== 'undefined' ? assets : [];
+    const getVal = (a,i) => typeof getAssetValue === 'function' ? (getAssetValue(a,i)||0) : (a.qty||0);
+    const tot = assetList.reduce((s,a,i) => s+(getVal(a,i)||0), 0);
+    let bx=bX;
+    assetList.forEach((a,i) => {
+      const pct = tot>0 ? getVal(a,i)/tot : 0;
+      if (pct<0.005) return;
+      const w=Math.max(Math.round(pct*bW)-2,2);
+      rr(bx,bY,w,bH,3); ctx.fillStyle=a.color||'#4f8ef7'; ctx.fill();
+      bx+=w+2;
+    });
+
+    // Chips
+    let cx2=cx+18, cy2=cy+152;
+    ctx.font='bold 11px monospace';
+    assetList.forEach((a,i) => {
+      if (cy2+26>cy+ch-36) return;
+      const pct = tot>0 ? (getVal(a,i)/tot*100).toFixed(1) : '0';
+      const lbl = a.ticker+'  '+pct+'%';
+      const tw = ctx.measureText(lbl).width+20;
+      if (cx2+tw>cx+cw-18) { cx2=cx+18; cy2+=30; }
+      if (cy2+24>cy+ch-36) return;
+      rr(cx2,cy2,tw,24,5);
+      ctx.fillStyle=(a.color||'#4f8ef7')+'28'; ctx.fill();
+      ctx.strokeStyle=(a.color||'#4f8ef7')+'70'; ctx.lineWidth=1; ctx.stroke();
+      ctx.fillStyle=a.color||'#4f8ef7';
+      ctx.fillText(lbl, cx2+10, cy2+16);
+      cx2+=tw+7;
+    });
+
+    // Footer
+    ctx.fillStyle='rgba(255,255,255,0.07)';
+    ctx.fillRect(cx+18, cy+ch-32, cw-36, 1);
+    ctx.fillStyle='#6b7280'; ctx.font='11px monospace';
+    ctx.fillText('wealthos.world', cx+18, cy+ch-11);
+    ctx.textAlign='right';
+    ctx.fillText(new Date().toLocaleDateString('vi-VN'), cx+cw-18, cy+ch-11);
+    ctx.textAlign='left';
+
+    return canvas;
+  } catch(e) {
+    console.error('buildPortfolioCanvas error:', e);
+    throw e;
   }
 }
 
