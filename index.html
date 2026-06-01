@@ -880,6 +880,8 @@ const LANG = {
     aiBack:'← Phân tích lại',
     aiErrNoRisk:'Vui lòng chọn khẩu vị rủi ro trước khi phân tích.',
     aiErrNoKey:'Vui lòng nhập Google Gemini API Key.',
+    shareModalTitle:'Chia sẻ danh mục', shareModalSub:'Lan truyền Wealthos đến bạn bè & cộng đồng',
+    shareDownloadBtn:'Tải ảnh về', shareCopyBtn:'Sao chép link',
     aiErrConn:'Lỗi kết nối. Vui lòng thử lại.',
   },
   en: {
@@ -973,6 +975,8 @@ const LANG = {
     aiBack:'← Analyze again',
     aiErrNoRisk:'Please select a risk profile before analyzing.',
     aiErrNoKey:'Please enter your Google Gemini API Key.',
+    shareModalTitle:'Share Portfolio', shareModalSub:'Spread Wealthos to friends & community',
+    shareDownloadBtn:'Download Image', shareCopyBtn:'Copy Link',
     aiErrConn:'Connection error. Please try again.',
   },
   zh: {
@@ -1050,6 +1054,8 @@ const LANG = {
     aiClose:'关闭', aiAnalyze:'✦ 立即分析', aiAnalyzing:'分析中...',
     aiBack:'← 重新分析',
     aiErrNoRisk:'请在分析前选择风险偏好。', aiErrNoKey:'请输入Google Gemini API Key。', aiErrConn:'连接错误，请重试。',
+    shareModalTitle:'分享投资组合', shareModalSub:'将Wealthos分享给朋友和社区',
+    shareDownloadBtn:'下载图片', shareCopyBtn:'复制链接',
     // dynamic inline strings
     balanceLabel:'余额', propertyLabel:'房产价值 (USD)', assetValLabel:'资产价值 (USD)', qtyLabel:'持仓数量',
     currentValueLabel:'当前价值 (USD)', expectedReturnLabel:'预期收益',
@@ -1138,6 +1144,8 @@ const LANG = {
     aiClose:'閉じる', aiAnalyze:'✦ 今すぐ分析', aiAnalyzing:'分析中...',
     aiBack:'← 再分析',
     aiErrNoRisk:'分析前にリスク志向を選択してください。', aiErrNoKey:'Google Gemini API Keyを入力してください。', aiErrConn:'接続エラー。再試行してください。',
+    shareModalTitle:'ポートフォリオを共有', shareModalSub:'Wealthosを友達やコミュニティに広める',
+    shareDownloadBtn:'画像をダウンロード', shareCopyBtn:'リンクをコピー',
     balanceLabel:'残高', propertyLabel:'不動産価値 (USD)', assetValLabel:'資産価値 (USD)', qtyLabel:'保有数量',
     currentValueLabel:'現在価値 (USD)', expectedReturnLabel:'期待収益',
     chatSub:'💬 AIファイナンシャルアドバイザーとチャット', freeSub:'現在のポートフォリオの強みと弱みを分析',
@@ -1225,6 +1233,8 @@ const LANG = {
     aiClose:'닫기', aiAnalyze:'✦ 지금 분석', aiAnalyzing:'분석 중...',
     aiBack:'← 재분석',
     aiErrNoRisk:'분석 전에 위험 성향을 선택하세요.', aiErrNoKey:'Google Gemini API Key를 입력하세요.', aiErrConn:'연결 오류. 다시 시도하세요.',
+    shareModalTitle:'포트폴리오 공유', shareModalSub:'Wealthos를 친구 및 커뮤니티에 알리세요',
+    shareDownloadBtn:'이미지 다운로드', shareCopyBtn:'링크 복사',
     balanceLabel:'잔액', propertyLabel:'부동산 가치 (USD)', assetValLabel:'자산 가치 (USD)', qtyLabel:'보유 수량',
     currentValueLabel:'현재 가치 (USD)', expectedReturnLabel:'기대 수익',
     chatSub:'💬 AI 재무 어드바이저와 채팅', freeSub:'현재 포트폴리오의 강점과 약점 분석',
@@ -1312,6 +1322,8 @@ const LANG = {
     aiClose:'Fermer', aiAnalyze:'✦ Analyser maintenant', aiAnalyzing:'Analyse en cours...',
     aiBack:'← Réanalyser',
     aiErrNoRisk:"Veuillez sélectionner un profil de risque avant d'analyser.", aiErrNoKey:'Veuillez entrer votre clé Google Gemini API.', aiErrConn:'Erreur de connexion. Veuillez réessayer.',
+    shareModalTitle:'Partager le portefeuille', shareModalSub:"Faites connaître Wealthos à vos amis",
+    shareDownloadBtn:"Télécharger l'image", shareCopyBtn:'Copier le lien',
     balanceLabel:'Solde', propertyLabel:'Valeur immobilière (USD)', assetValLabel:"Valeur de l'actif (USD)", qtyLabel:'Quantité détenue',
     currentValueLabel:'Valeur actuelle (USD)', expectedReturnLabel:'Rendement attendu',
     chatSub:'💬 Chattez avec votre conseiller IA', freeSub:'Analyser les forces et faiblesses du portefeuille',
@@ -1399,6 +1411,8 @@ const LANG = {
     aiClose:'Закрыть', aiAnalyze:'✦ Анализировать', aiAnalyzing:'Анализ...',
     aiBack:'← Повторить анализ',
     aiErrNoRisk:'Пожалуйста, выберите риск-профиль перед анализом.', aiErrNoKey:'Пожалуйста, введите ключ Google Gemini API.', aiErrConn:'Ошибка подключения. Повторите попытку.',
+    shareModalTitle:'Поделиться портфелем', shareModalSub:'Расскажите о Wealthos друзьям и сообществу',
+    shareDownloadBtn:'Скачать изображение', shareCopyBtn:'Копировать ссылку',
     balanceLabel:'Баланс', propertyLabel:'Стоимость недвижимости (USD)', assetValLabel:'Стоимость актива (USD)', qtyLabel:'Количество',
     currentValueLabel:'Текущая стоимость (USD)', expectedReturnLabel:'Ожидаемая доходность',
     chatSub:'💬 Чат с вашим ИИ-финансовым советником', freeSub:'Анализ сильных и слабых сторон портфеля',
@@ -4159,15 +4173,22 @@ ${aiSection}
     <button onclick="closeShareModal()" style="position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--mu);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px;">×</button>
     <div style="text-align:center;margin-bottom:20px;">
       <div style="font-size:28px;margin-bottom:8px;">🚀</div>
-      <div style="font-size:16px;font-weight:700;color:var(--tx);">Chia sẻ danh mục</div>
-      <div style="font-size:11px;color:var(--mu);margin-top:4px;">Lan truyền Wealthos đến bạn bè & cộng đồng</div>
+      <div id="share-title" style="font-size:16px;font-weight:700;color:var(--tx);" data-i18n="shareModalTitle">Chia sẻ danh mục</div>
+      <div id="share-sub" style="font-size:11px;color:var(--mu);margin-top:4px;" data-i18n="shareModalSub">Lan truyền Wealthos đến bạn bè & cộng đồng</div>
     </div>
     <!-- Captured image preview -->
     <div id="sc-capture-preview" style="margin-bottom:18px;min-height:80px;"></div>
     <!-- Actions -->
-    <button onclick="shareTo('download')" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:10px;border:1px solid rgba(79,142,247,0.3);background:rgba(79,142,247,0.1);color:#4f8ef7;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);">
+    <div style="display:flex;gap:10px;">
+    <button onclick="shareTo('download')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:10px;border:1px solid rgba(79,142,247,0.3);background:rgba(79,142,247,0.1);color:#4f8ef7;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Tải ảnh về
+      <span id="share-download-label" data-i18n="shareDownloadBtn">Tải ảnh về</span>
+    </button>
+    <button id="copy-link-btn" onclick="copyShareLink()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:10px;border:1px solid rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);color:#34d399;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span id="share-copy-label" data-i18n="shareCopyBtn">Sao chép link</span>
+    </button>
+    </div>
 
 <script>
 let _shareBlob = null;
@@ -4179,7 +4200,7 @@ async function openShareModal() {
   if (navigator.share) document.getElementById('native-share-btn')?.style && (document.getElementById('native-share-btn').style.display = 'block');
 
   const preview = document.getElementById('sc-capture-preview');
-  preview.innerHTML = '<div style="text-align:center;padding:24px;color:#6b7280;font-size:11px;font-family:monospace;">📸 Đang tạo ảnh...</div>';
+  preview.innerHTML = `<div style="text-align:center;padding:24px;color:#6b7280;font-size:11px;font-family:monospace;">${t('shareCapture')||'📸 Generating...'}</div>`;
   _shareBlob = null; _shareDataUrl = null;
 
   try {
@@ -4191,7 +4212,7 @@ async function openShareModal() {
     </div>`;
     canvas.toBlob(b => { _shareBlob = b; }, 'image/png');
   } catch(e) {
-    preview.innerHTML = `<div style="color:#f87171;text-align:center;padding:16px;font-size:11px;">⚠ Lỗi: ${e.message}</div>`;
+    preview.innerHTML = `<div style="color:#f87171;text-align:center;padding:16px;font-size:11px;">⚠ ${t('shareError2')||'Error'}: ${e.message}</div>`;
     console.error('Share canvas error:', e);
   }
 }
@@ -4389,8 +4410,13 @@ async function copyShareLink() {
       showShareToast(t('copiedLink')||'✓ Link copied!');
     }
   } catch { await navigator.clipboard.writeText(text).catch(()=>{}); }
-  btn.textContent = '✓ ' + (t('copiedLabel')||'Copied');
-  setTimeout(() => { btn.textContent = t('copyLabel')||'Copy'; }, 2500);
+  const _copyLbl = document.getElementById('share-copy-label');
+  if(_copyLbl) _copyLbl.textContent = '✓ ' + (t('copiedLabel')||'Copied');
+  else if(btn) btn.textContent = '✓ ' + (t('copiedLabel')||'Copied');
+  setTimeout(() => {
+    if(_copyLbl) _copyLbl.textContent = t('shareCopyBtn')||t('copyLabel')||'Copy';
+    else if(btn) btn.textContent = t('shareCopyBtn')||'Copy';
+  }, 2500);
 }
 
 function showShareToast(msg) {
