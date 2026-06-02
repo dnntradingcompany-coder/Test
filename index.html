@@ -271,8 +271,7 @@ input[type=number]{-moz-appearance:textfield;}
   .fc-metric .fc-ml{font-size:9px;}
   /* Vốn ban đầu */
   #forecast-section > div:nth-child(3){grid-template-columns:1fr !important;}
-  .fc-params-grid{grid-template-columns:1fr !important;}
-  /* Chart dự báo */
+  .fc-params-grid{grid-template-columns:1fr !important;}  /* Chart dự báo */
   #fc-chart{height:160px !important;}
   #forecast-section [style*="height:260px"]{height:160px !important;}
   /* Bảng năm — ẩn bớt trên mobile */
@@ -415,12 +414,21 @@ input[type=number]{-moz-appearance:textfield;}
     <div id="fc-asset-scenarios" style="display:grid;gap:12px;margin-bottom:16px;"></div>
 
     <!-- Thông số -->
-    <div class="fc-params-grid" style="display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:16px;">
+    <div class="fc-params-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
       <div class="hfield" style="padding:14px 16px;">
         <div class="sl" style="margin-bottom:8px;" data-i18n="initCapital">VỐN BAN ĐẦU (USD)</div>
         <div class="hinput-wrap">
           <input class="hinput" type="text" id="fc-init" value="30,000"
             placeholder="30,000" oninput="fcInputInit(this)"
+            style="font-size:15px;font-weight:600;padding-right:48px;">
+          <span class="hunit">USD</span>
+        </div>
+      </div>
+      <div class="hfield" style="padding:14px 16px;">
+        <div class="sl" style="margin-bottom:8px;" data-i18n="dcaMonth">DCA / THÁNG (USD)</div>
+        <div class="hinput-wrap">
+          <input class="hinput" type="text" id="fc-dca-field" value="0"
+            placeholder="0" oninput="fcInputDCA(this)"
             style="font-size:15px;font-weight:600;padding-right:48px;">
           <span class="hunit">USD</span>
         </div>
@@ -567,7 +575,7 @@ input[type=number]{-moz-appearance:textfield;}
     <!-- TAB TIỀN MẶT -->
     <div id="tab-cash" style="display:none">
       <div class="modal-label">TÊN GỌI</div>
-      <input class="modal-input" id="cash-name" placeholder="Ví dụ: Tiết kiệm VPBank" maxlength="40" value="Tiền mặt / Tiết kiệm">
+      <input class="modal-input" id="cash-name" placeholder="Ví dụ: Tiết kiệm VPBank" maxlength="40">
       <div class="modal-label">TIỀN TỆ</div>
       <select class="modal-input" id="cash-currency" style="cursor:pointer">
         <option value="USD">USD – Đô la Mỹ</option>
@@ -892,6 +900,9 @@ const LANG = {
     shareModalTitle:'Chia sẻ danh mục', shareModalSub:'Lan truyền Wealthos đến bạn bè & cộng đồng',
     shareDownloadBtn:'Tải ảnh về', shareCopyBtn:'Sao chép link',
     aiErrConn:'Lỗi kết nối. Vui lòng thử lại.',
+    commGold:'Vàng', commSilver:'Bạc', commOil:'Dầu thô WTI', commGas:'Khí tự nhiên', commPlat:'Bạch kim', commCopper:'Đồng', commWheat:'Lúa mì', commCoffee:'Cà phê',
+    qtyLabel:'KHỐI LƯỢNG NẮM GIỮ', currentValueLabel:'GIÁ TRỊ QUY ĐỔI (USD)', balanceLabel:'SỐ DƯ',
+    propertyLabel:'GIÁ TRỊ BĐS (USD)', assetValLabel:'GIÁ TRỊ TÀI SẢN (USD)', expectedReturnLabel:'Tăng trưởng dự kiến',
   },
   en: {
     logo:'WEALTHOS', title:'AI Net Worth & Portfolio Tracker',
@@ -987,6 +998,9 @@ const LANG = {
     shareModalTitle:'Share Portfolio', shareModalSub:'Spread Wealthos to friends & community',
     shareDownloadBtn:'Download Image', shareCopyBtn:'Copy Link',
     aiErrConn:'Connection error. Please try again.',
+    commGold:'Gold', commSilver:'Silver', commOil:'Crude Oil WTI', commGas:'Natural Gas', commPlat:'Platinum', commCopper:'Copper', commWheat:'Wheat', commCoffee:'Coffee',
+    qtyLabel:'QUANTITY HELD', currentValueLabel:'CURRENT VALUE (USD)', balanceLabel:'BALANCE',
+    propertyLabel:'PROPERTY VALUE (USD)', assetValLabel:'ASSET VALUE (USD)', expectedReturnLabel:'Expected return',
   },
   zh: {
     logo:'WEALTHOS', title:'AI 净资产与投资组合追踪器',
@@ -1063,6 +1077,7 @@ const LANG = {
     aiClose:'关闭', aiAnalyze:'✦ 立即分析', aiAnalyzing:'分析中...',
     aiBack:'← 重新分析',
     aiErrNoRisk:'请在分析前选择风险偏好。', aiErrNoKey:'请输入Google Gemini API Key。', aiErrConn:'连接错误，请重试。',
+    commGold:'黄金', commSilver:'白银', commOil:'原油 WTI', commGas:'天然气', commPlat:'铂金', commCopper:'铜', commWheat:'小麦', commCoffee:'咖啡',
     shareModalTitle:'分享投资组合', shareModalSub:'将Wealthos分享给朋友和社区',
     shareDownloadBtn:'下载图片', shareCopyBtn:'复制链接',
     // dynamic inline strings
@@ -1153,6 +1168,7 @@ const LANG = {
     aiClose:'閉じる', aiAnalyze:'✦ 今すぐ分析', aiAnalyzing:'分析中...',
     aiBack:'← 再分析',
     aiErrNoRisk:'分析前にリスク志向を選択してください。', aiErrNoKey:'Google Gemini API Keyを入力してください。', aiErrConn:'接続エラー。再試行してください。',
+    commGold:'金', commSilver:'銀', commOil:'原油 WTI', commGas:'天然ガス', commPlat:'プラチナ', commCopper:'銅', commWheat:'小麦', commCoffee:'コーヒー',
     shareModalTitle:'ポートフォリオを共有', shareModalSub:'Wealthosを友達やコミュニティに広める',
     shareDownloadBtn:'画像をダウンロード', shareCopyBtn:'リンクをコピー',
     balanceLabel:'残高', propertyLabel:'不動産価値 (USD)', assetValLabel:'資産価値 (USD)', qtyLabel:'保有数量',
@@ -1242,6 +1258,7 @@ const LANG = {
     aiClose:'닫기', aiAnalyze:'✦ 지금 분석', aiAnalyzing:'분석 중...',
     aiBack:'← 재분석',
     aiErrNoRisk:'분석 전에 위험 성향을 선택하세요.', aiErrNoKey:'Google Gemini API Key를 입력하세요.', aiErrConn:'연결 오류. 다시 시도하세요.',
+    commGold:'금', commSilver:'은', commOil:'원유 WTI', commGas:'천연가스', commPlat:'백금', commCopper:'구리', commWheat:'밀', commCoffee:'커피',
     shareModalTitle:'포트폴리오 공유', shareModalSub:'Wealthos를 친구 및 커뮤니티에 알리세요',
     shareDownloadBtn:'이미지 다운로드', shareCopyBtn:'링크 복사',
     balanceLabel:'잔액', propertyLabel:'부동산 가치 (USD)', assetValLabel:'자산 가치 (USD)', qtyLabel:'보유 수량',
@@ -1331,6 +1348,7 @@ const LANG = {
     aiClose:'Fermer', aiAnalyze:'✦ Analyser maintenant', aiAnalyzing:'Analyse en cours...',
     aiBack:'← Réanalyser',
     aiErrNoRisk:"Veuillez sélectionner un profil de risque avant d'analyser.", aiErrNoKey:'Veuillez entrer votre clé Google Gemini API.', aiErrConn:'Erreur de connexion. Veuillez réessayer.',
+    commGold:'Or', commSilver:'Argent', commOil:'Pétrole brut WTI', commGas:'Gaz naturel', commPlat:'Platine', commCopper:'Cuivre', commWheat:'Blé', commCoffee:'Café',
     shareModalTitle:'Partager le portefeuille', shareModalSub:"Faites connaître Wealthos à vos amis",
     shareDownloadBtn:"Télécharger l'image", shareCopyBtn:'Copier le lien',
     balanceLabel:'Solde', propertyLabel:'Valeur immobilière (USD)', assetValLabel:"Valeur de l'actif (USD)", qtyLabel:'Quantité détenue',
@@ -1420,6 +1438,7 @@ const LANG = {
     aiClose:'Закрыть', aiAnalyze:'✦ Анализировать', aiAnalyzing:'Анализ...',
     aiBack:'← Повторить анализ',
     aiErrNoRisk:'Пожалуйста, выберите риск-профиль перед анализом.', aiErrNoKey:'Пожалуйста, введите ключ Google Gemini API.', aiErrConn:'Ошибка подключения. Повторите попытку.',
+    commGold:'Золото', commSilver:'Серебро', commOil:'Нефть WTI', commGas:'Природный газ', commPlat:'Платина', commCopper:'Медь', commWheat:'Пшеница', commCoffee:'Кофе',
     shareModalTitle:'Поделиться портфелем', shareModalSub:'Расскажите о Wealthos друзьям и сообществу',
     shareDownloadBtn:'Скачать изображение', shareCopyBtn:'Копировать ссылку',
     balanceLabel:'Баланс', propertyLabel:'Стоимость недвижимости (USD)', assetValLabel:'Стоимость актива (USD)', qtyLabel:'Количество',
@@ -1437,7 +1456,7 @@ const LANG = {
   },
 };
 
-let currentLang = (['vi','en','zh','ja','ko','fr','ru'].includes(localStorage.getItem('lang'))) ? localStorage.getItem('lang') : 'vi';
+let currentLang = (['vi','en','zh','ja','ko','fr','ru'].includes(localStorage.getItem('lang'))) ? localStorage.getItem('lang') : 'en';
 const t = key => {
   try {
     return (LANG[currentLang] && LANG[currentLang][key] !== undefined ? LANG[currentLang][key] : null) || (LANG.en && LANG.en[key]) || (LANG.vi && LANG.vi[key]) || key;
@@ -1470,7 +1489,7 @@ function applyLang() {
   if(assetBtns[1]) assetBtns[1].textContent = t('btnAdd');
   // AI advisor button in header
   const aiBtn = document.getElementById('ai-btn');
-  if(aiBtn) aiBtn.querySelector('span').textContent = t('aiBtn');
+  if(aiBtn) { const lbl = aiBtn.querySelector('.btn-label'); if(lbl) lbl.textContent = t('aiAdvisorBtn'); }
   // AI context placeholder
   const aiCtx = document.getElementById('ai-context');
   if(aiCtx) aiCtx.placeholder = t('aiContextPlh');
@@ -1590,12 +1609,37 @@ function _closeLangMenu(e) {
   const wrap = document.getElementById('lang-dropdown-wrap');
   if (wrap && !wrap.contains(e.target)) { const m = document.getElementById('lang-menu'); if(m) m.style.display='none'; }
 }
+// Translate names of default localizable assets when lang changes
+const LOCALIZABLE_ASSET_NAMES = {
+  OIL:    { vi:'Dầu thô WTI', en:'Crude Oil WTI', zh:'原油', ja:'原油', ko:'원유', fr:'Pétrole brut', ru:'Нефть WTI' },
+  SILVER: { vi:'Bạc',        en:'Silver',         zh:'白银', ja:'銀',   ko:'은',   fr:'Argent',      ru:'Серебро' },
+  GOLD:   { vi:'Vàng',       en:'Gold',            zh:'黄金', ja:'金',   ko:'금',   fr:'Or',          ru:'Золото' },
+  GAS:    { vi:'Khí tự nhiên', en:'Natural Gas',   zh:'天然气', ja:'天然ガス', ko:'천연가스', fr:'Gaz naturel', ru:'Природный газ' },
+};
+function translateDefaultAssets() {
+  if (typeof assets === 'undefined') return;
+  assets.forEach(a => {
+    if (LOCALIZABLE_ASSET_NAMES[a.ticker]) {
+      a.name = LOCALIZABLE_ASSET_NAMES[a.ticker][currentLang] || LOCALIZABLE_ASSET_NAMES[a.ticker].en;
+    }
+    if (a.type === 'cash') {
+      const allCashDefaults = Object.values(LANG).map(l => l.cashDefault).filter(Boolean);
+      if (allCashDefaults.includes(a.name)) {
+        a.name = t('cashDefault');
+      }
+    }
+  });
+  renderHoldings();
+  saveAll();
+}
+
 function setLang(code) {
   if (!LANG[code]) return;
   currentLang = code;
   localStorage.setItem('lang', currentLang);
   const menu = document.getElementById('lang-menu'); if (menu) menu.style.display = 'none';
   applyLang();
+  translateDefaultAssets();
 }
 function toggleLang() { setLang(currentLang==='vi'?'en':'vi'); }
 
@@ -1634,16 +1678,19 @@ const STOCK_CATALOG = [
   { id:'VPB.VN',  name:'VPBank',      ticker:'VPB.VN',  icon:'🏛️', color:'#0ea5e9', type:'stock' },
   { id:'MWG.VN',  name:'Thế Giới Di Động', ticker:'MWG.VN', icon:'📱', color:'#8b5cf6', type:'stock' },
 ];
-const COMMODITY_CATALOG = [
-  { id:'XAUUSD', name:'Vàng',         ticker:'GOLD',   icon:'🥇', color:'#ffd700', type:'commodity', stooq:'xauusd', cc:'XAU' },
-  { id:'XAGUSD', name:'Bạc',          ticker:'SILVER', icon:'🥈', color:'#c0c0c0', type:'commodity', stooq:'xagusd', cc:'XAG' },
-  { id:'USOIL',  name:'Dầu thô WTI', ticker:'OIL',    icon:'🛢️', color:'#6b4f2a', type:'commodity', stooq:'cl.f',  cc:null  },
-  { id:'NATGAS', name:'Khí tự nhiên',ticker:'GAS',    icon:'🔥', color:'#f97316', type:'commodity', stooq:'ng.f',  cc:null  },
-  { id:'XPTUSD', name:'Bạch kim',     ticker:'PLAT',   icon:'⚪', color:'#e5e7eb', type:'commodity', stooq:'xptusd',cc:'XPT' },
-  { id:'XCUUSD', name:'Đồng',         ticker:'COPPER', icon:'🟤', color:'#b87333', type:'commodity', stooq:'hg.f',  cc:null  },
-  { id:'WHEAT',  name:'Lúa mì',       ticker:'WHEAT',  icon:'🌾', color:'#d4a017', type:'commodity', stooq:'zw.f',  cc:null  },
-  { id:'COFFEE', name:'Cà phê',       ticker:'COFFEE', icon:'☕', color:'#6f4e37', type:'commodity', stooq:'kc.f',  cc:null  },
+const COMMODITY_CATALOG_DATA = [
+  { id:'XAUUSD', nameKey:'commGold',    ticker:'GOLD',   icon:'🥇', color:'#ffd700', type:'commodity', stooq:'xauusd', cc:'XAU' },
+  { id:'XAGUSD', nameKey:'commSilver',  ticker:'SILVER', icon:'🥈', color:'#c0c0c0', type:'commodity', stooq:'xagusd', cc:'XAG' },
+  { id:'USOIL',  nameKey:'commOil',     ticker:'OIL',    icon:'🛢️', color:'#6b4f2a', type:'commodity', stooq:'cl.f',  cc:null  },
+  { id:'NATGAS', nameKey:'commGas',     ticker:'GAS',    icon:'🔥', color:'#f97316', type:'commodity', stooq:'ng.f',  cc:null  },
+  { id:'XPTUSD', nameKey:'commPlat',    ticker:'PLAT',   icon:'⚪', color:'#e5e7eb', type:'commodity', stooq:'xptusd',cc:'XPT' },
+  { id:'XCUUSD', nameKey:'commCopper',  ticker:'COPPER', icon:'🟤', color:'#b87333', type:'commodity', stooq:'hg.f',  cc:null  },
+  { id:'WHEAT',  nameKey:'commWheat',   ticker:'WHEAT',  icon:'🌾', color:'#d4a017', type:'commodity', stooq:'zw.f',  cc:null  },
+  { id:'COFFEE', nameKey:'commCoffee',  ticker:'COFFEE', icon:'☕', color:'#6f4e37', type:'commodity', stooq:'kc.f',  cc:null  },
 ];
+const getCommodityCatalog = () => COMMODITY_CATALOG_DATA.map(c => ({ ...c, name: t(c.nameKey) || c.ticker }));
+// Keep COMMODITY_CATALOG as getter for backward compat
+Object.defineProperty(window, 'COMMODITY_CATALOG', { get: getCommodityCatalog });
 
 // ─────────────────────────────────────────────────────────────
 //  STATE
@@ -2064,7 +2111,7 @@ async function fetchCryptoHistory(id) {
 //  COMMODITY FETCH  (Stooq → CryptoCompare metals → Yahoo)
 // ─────────────────────────────────────────────────────────────
 const COMMODITY_MAP = {};
-COMMODITY_CATALOG.forEach(c => { COMMODITY_MAP[c.id] = c; });
+COMMODITY_CATALOG_DATA.forEach(c => { COMMODITY_MAP[c.id] = c; });
 
 async function fetchCommodity(id) {
   const cached = cacheGet('commodity:'+id);
@@ -2072,31 +2119,41 @@ async function fetchCommodity(id) {
   const meta = COMMODITY_MAP[id] || {};
   const attempts = [];
 
-  // 1) Stooq CSV qua proxy — lấy 2 ngày để tính % đúng
-  if (meta.stooq) {
-    attempts.push((async () => {
-      const url = `https://stooq.com/q/d/l/?s=${meta.stooq}&i=d`;
-      const proxies = [
-        `https://corsproxy.io/?${encodeURIComponent(url)}`,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-      ];
-      const r = await Promise.any(proxies.map(p => fetchWithTimeout(p)));
+  // Yahoo Finance futures map — these often work CORS-free directly
+  const yahooMap = { 'XAUUSD':'GC=F','XAGUSD':'SI=F','USOIL':'CL=F','NATGAS':'NG=F','XPTUSD':'PL=F','XCUUSD':'HG=F','WHEAT':'ZW=F','COFFEE':'KC=F' };
+  const yahooSym = yahooMap[id];
+
+  // 1) Yahoo direct (no proxy) — fastest, works on most browsers
+  if (yahooSym) {
+    const parseYF = async url => {
+      const r = await fetchWithTimeout(url, { headers: { Accept: 'application/json' } });
       if (!r.ok) throw new Error('fail');
-      const text = await r.text();
-      const lines = text.trim().split('\n').slice(1).slice(-2); // 2 ngày gần nhất
-      if (lines.length < 1) throw new Error('no data');
-      // Format: Date,Open,High,Low,Close,Volume
-      const today = lines[lines.length-1].split(',');
-      const close = parseFloat(today[4]);
-      if (!close || isNaN(close)) throw new Error('bad price');
-      // prev close = close của ngày hôm qua (không dùng open)
-      const prev = lines.length >= 2 ? parseFloat(lines[lines.length-2].split(',')[4]) : null;
-      const pct = prev && prev > 0 ? (close - prev) / prev * 100 : null;
-      return { id, current_price: close, price_change_percentage_24h: pct };
-    })());
+      const d = await r.json();
+      const res = d?.chart?.result?.[0];
+      const price = res?.meta?.regularMarketPrice;
+      if (!price) throw new Error('no price');
+      const prev = res?.meta?.previousClose || res?.meta?.chartPreviousClose;
+      return { id, current_price: price, price_change_percentage_24h: prev ? (price-prev)/prev*100 : null };
+    };
+    const yUrl1 = `https://query1.finance.yahoo.com/v8/finance/chart/${yahooSym}?interval=1d&range=2d`;
+    const yUrl2 = `https://query2.finance.yahoo.com/v8/finance/chart/${yahooSym}?interval=1d&range=2d`;
+    attempts.push(parseYF(yUrl1).catch(() => parseYF(yUrl2)));
+
+    // 2) Yahoo via CF Worker (reliable on all browsers including Safari)
+    if (CF_WORKER_URL) {
+      attempts.push(parseYF(`${CF_WORKER_URL}?url=${encodeURIComponent(yUrl1)}`));
+    }
+
+    // 3) Yahoo via other proxies
+    const proxyList = [
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(yUrl1)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yUrl1)}`,
+      `https://corsproxy.io/?${encodeURIComponent(yUrl1)}`,
+    ];
+    proxyList.forEach(p => attempts.push(parseYF(p)));
   }
 
-  // 2) CryptoCompare metals (XAU, XAG, XPT)
+  // 4) CryptoCompare metals — no CORS, works everywhere
   if (meta.cc) {
     attempts.push((async () => {
       const r = await fetchWithTimeout(`https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${meta.cc}&tsyms=USD`);
@@ -2108,32 +2165,36 @@ async function fetchCommodity(id) {
     })());
   }
 
-  // 3) Twelve Data (ETF/futures symbols)
-  const tdMap = { 'XAUUSD':'XAU/USD','XAGUSD':'XAG/USD','USOIL':'WTI/USD','XPTUSD':'XPT/USD' };
-  const tdSym = tdMap[id];
-  if (tdSym) {
-    attempts.push((async () => {
-      const v = await fetchTwelveData(tdSym);
-      return { id, current_price: v.price, price_change_percentage_24h: v.pct };
-    })());
+  // 5) Stooq via CF Worker + proxies
+  if (meta.stooq) {
+    const stooqUrl = `https://stooq.com/q/d/l/?s=${meta.stooq}&i=d`;
+    const parseStooq = async url => {
+      const r = await fetchWithTimeout(url);
+      if (!r.ok) throw new Error('fail');
+      const text = await r.text();
+      const lines = text.trim().split('\n').slice(1).slice(-2);
+      if (lines.length < 1) throw new Error('no data');
+      const today = lines[lines.length-1].split(',');
+      const close = parseFloat(today[4]);
+      if (!close || isNaN(close)) throw new Error('bad price');
+      const prev = lines.length >= 2 ? parseFloat(lines[lines.length-2].split(',')[4]) : null;
+      return { id, current_price: close, price_change_percentage_24h: prev && prev>0 ? (close-prev)/prev*100 : null };
+    };
+    const stooqProxies = [
+      ...(CF_WORKER_URL ? [`${CF_WORKER_URL}?url=${encodeURIComponent(stooqUrl)}`] : []),
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(stooqUrl)}`,
+      `https://corsproxy.io/?${encodeURIComponent(stooqUrl)}`,
+    ];
+    stooqProxies.forEach(p => attempts.push(parseStooq(p)));
   }
 
-  // 4) Yahoo Finance futures
-  const yahooMap = { 'XAUUSD':'GC=F','XAGUSD':'SI=F','USOIL':'CL=F','NATGAS':'NG=F','XPTUSD':'PL=F','XCUUSD':'HG=F','WHEAT':'ZW=F','COFFEE':'KC=F' };
-  const yahooSym = yahooMap[id];
-  if (yahooSym) {
-    attempts.push((async () => {
-      const v = await fetchYahoo(yahooSym);
-      return { id, current_price: v.price, price_change_percentage_24h: v.pct };
-    })());
-  }
+  if (!attempts.length) throw new Error(`${meta.ticker||id} not supported`);
 
   try {
     const result = await Promise.any(attempts);
     cacheSet('commodity:'+id, result.current_price, result.price_change_percentage_24h);
     return result;
-  }
-  catch(_) { throw new Error(`${meta.ticker||id} không tải được`); }
+  } catch(_) { throw new Error(`${meta.ticker||id} không tải được`); }
 }
 
 const RE_GROWTH = {
@@ -2714,7 +2775,7 @@ function addSelectedAsset() {
   $('modal-err').style.display='none';
   let asset;
   if (currentTab==='cash') {
-    const name     = ($('cash-name').value.trim())||'Tiền mặt';
+    const name     = ($('cash-name').value.trim())||t('cashDefault');
     const currency = $('cash-currency').value;
     const rate     = parseFloat($('cash-rate').value)||5.5;
     asset = { id:'cash_'+Date.now(), name, ticker:currency, icon:'💵', color:'#34d399',
@@ -2871,20 +2932,135 @@ const FC_ASSET_DATA = {
   custom:     { histRate:0.08,  histPeriod:'5yr',  bull:0.15,  real:0.08,  bear:0.02  },
 };
 
+// Cache for live historical rates per asset
+const FC_LIVE_RATES = {}; // key: asset.id → { cagr1, cagr3, cagr5, cagr10, best, period, updatedAt }
+
+// Fetch historical prices and compute CAGR for 1/3/5/10yr
+async function fetchHistoricalCAGR(asset) {
+  const cacheKey = 'fcHist:' + asset.id;
+  const cached = sessionStorage.getItem(cacheKey);
+  if (cached) { try { return JSON.parse(cached); } catch(_) {} }
+
+  const now = Math.floor(Date.now()/1000);
+  const yrs = [1, 3, 5, 10];
+  const results = {};
+
+  const computeCAGR = (start, end, years) => {
+    if (!start || !end || start <= 0) return null;
+    return Math.pow(end / start, 1 / years) - 1;
+  };
+
+  const tryYahoo = async (sym, range) => {
+    const urls = [
+      `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1mo&range=${range}`,
+      `https://query2.finance.yahoo.com/v8/finance/chart/${sym}?interval=1mo&range=${range}`,
+      CF_WORKER_URL ? `${CF_WORKER_URL}?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1mo&range=${range}`)}` : null,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1mo&range=${range}`)}`,
+    ].filter(Boolean);
+
+    const r = await Promise.any(urls.map(u => fetchWithTimeout(u, { headers:{ Accept:'application/json' } }).then(r => { if(!r.ok) throw new Error('fail'); return r.json(); })));
+    const closes = r?.chart?.result?.[0]?.indicators?.quote?.[0]?.close?.filter(Boolean);
+    const current = r?.chart?.result?.[0]?.meta?.regularMarketPrice;
+    if (!closes?.length || !current) throw new Error('no data');
+    return { start: closes[0], end: current, closes };
+  };
+
+  const tryCoinGecko = async (id, days) => {
+    const url = `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=${days}&interval=monthly`;
+    const proxied = CF_WORKER_URL ? `${CF_WORKER_URL}?url=${encodeURIComponent(url)}` : `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const r = await Promise.any([url, proxied].map(u => fetchWithTimeout(u).then(r => { if(!r.ok) throw new Error('fail'); return r.json(); })));
+    const prices = r?.prices;
+    if (!prices?.length) throw new Error('no data');
+    return { start: prices[0][1], end: prices[prices.length-1][1] };
+  };
+
+  // Get Yahoo symbol
+  const yahooMap = { 'XAUUSD':'GC=F','XAGUSD':'SI=F','USOIL':'CL=F','NATGAS':'NG=F','XPTUSD':'PL=F','XCUUSD':'HG=F','WHEAT':'ZW=F','COFFEE':'KC=F' };
+  const yahooCommoditySym = yahooMap[asset.id];
+  const yahooStockSym = (asset.type === 'stock') ? asset.id : null;
+
+  for (const yr of yrs) {
+    const range = yr === 1 ? '1y' : yr === 3 ? '3y' : yr === 5 ? '5y' : '10y';
+    try {
+      let data = null;
+      if (asset.type === 'crypto' && asset.id !== 'usd-coin' && asset.id !== 'tether') {
+        data = await tryCoinGecko(asset.id, yr * 365);
+      } else if (yahooCommoditySym || yahooStockSym) {
+        data = await tryYahoo(yahooCommoditySym || yahooStockSym, range);
+      } else if (asset.type === 'stock') {
+        data = await tryYahoo(asset.id, range);
+      }
+      if (data?.start && data?.end) {
+        results[yr] = computeCAGR(data.start, data.end, yr);
+      }
+    } catch(_) {}
+  }
+
+  // Pick best available period
+  const available = yrs.filter(y => results[y] !== undefined && results[y] !== null);
+  if (!available.length) return null;
+
+  // Use longest available period as "hist"
+  const bestYr = available[available.length - 1];
+  const histRate = results[bestYr];
+  const histPeriod = bestYr + 'yr';
+
+  const liveData = {
+    cagr1:  results[1]  ?? null,
+    cagr3:  results[3]  ?? null,
+    cagr5:  results[5]  ?? null,
+    cagr10: results[10] ?? null,
+    histRate, histPeriod,
+    // Derive bull/real/bear from actual volatility
+    bull: histRate * 1.6,
+    real: (results[3] ?? results[5] ?? histRate),
+    bear: Math.max((results[1] ?? histRate) - Math.abs(histRate) * 0.8, -0.5),
+    updatedAt: Date.now(),
+  };
+
+  sessionStorage.setItem(cacheKey, JSON.stringify(liveData));
+  return liveData;
+}
+
+// Stablecoin IDs and tickers
+const STABLECOIN_IDS = new Set(['usd-coin','tether','dai','usdc','usdt','busd','tusd','usdp','frax','lusd','gusd','pyusd']);
+const STABLECOIN_TICKERS = new Set(['USDC','USDT','DAI','BUSD','TUSD','USDP','FRAX','GUSD','PYUSD']);
+
 function fcGetScenarios(type, asset) {
   let d = FC_ASSET_DATA[type] || FC_ASSET_DATA.stock;
-  // If asset has a custom growth rate (from "Khác / Other"), override rates
+
+  // Use live historical data if available
+  if (asset && FC_LIVE_RATES[asset.id]) {
+    const live = FC_LIVE_RATES[asset.id];
+    d = { histRate: live.histRate, histPeriod: live.histPeriod, bull: live.bull, real: live.real, bear: live.bear };
+  }
+
+  // Custom growth rate override
   if (asset && asset.customGrowthRate != null) {
     const r = asset.customGrowthRate;
     d = { histRate: r, histPeriod: 'custom', bull: r * 1.5, real: r, bear: Math.max(r * 0.3, -0.2) };
   }
-  const lang = currentLang || 'vi';
-  const vi = lang === 'vi';
+
+  // Stablecoin override
+  if (asset && (STABLECOIN_IDS.has((asset.id||'').toLowerCase()) || STABLECOIN_TICKERS.has((asset.ticker||'').toUpperCase()))) {
+    d = { histRate: 0.01, histPeriod: '1yr', bull: 0.055, real: 0.01, bear: 0.001 };
+  }
+
+  const vi = (currentLang || 'vi') === 'vi';
+  // Pick best available historical period: 10yr > 5yr > 3yr > 1yr
+  const live = asset ? FC_LIVE_RATES[asset.id] : null;
+  const bestHistRate = live ? (live.cagr10 ?? live.cagr5 ?? live.cagr3 ?? live.cagr1 ?? d.histRate) : d.histRate;
+  const bestHistPeriod = live
+    ? (live.cagr10 != null ? '10yr' : live.cagr5 != null ? '5yr' : live.cagr3 != null ? '3yr' : '1yr')
+    : d.histPeriod;
+  if (live) { d = { ...d, histRate: bestHistRate, histPeriod: bestHistPeriod }; }
+
   const pMap = { '10yr':vi?'10 năm':'10yr','5yr':vi?'5 năm':'5yr','3yr':vi?'3 năm':'3yr','1yr':vi?'1 năm':'1yr','since launch':vi?'từ ra mắt':'since launch','custom':vi?'tùy chỉnh':'custom' };
   const p = pMap[d.histPeriod] || d.histPeriod;
   const fmt = r => (r>=0?'+':'') + (r*100).toFixed(1)+'%';
+  const liveNote = live ? ' 📊' : '';
   return {
-    hist: { r: d.histRate, label: `${vi?'TB':'Avg'} ${p} ${fmt(d.histRate)}` },
+    hist: { r: d.histRate, label: `${vi?'TB':'Avg'} ${p} ${fmt(d.histRate)}${liveNote}` },
     bull: { r: d.bull,     label: `${vi?'Lạc quan':'Bull'} ${fmt(d.bull)}`  },
     real: { r: d.real,     label: `${vi?'Khả thi':'Real'} ${fmt(d.real)}`   },
     bear: { r: d.bear,     label: `${vi?'Bi quan':'Bear'} ${fmt(d.bear)}`   },
@@ -2892,6 +3068,29 @@ function fcGetScenarios(type, asset) {
 }
 
 function fcDefaultScenario(type) { return 'hist'; }
+
+// Fetch live historical rates for all assets and re-render forecast
+async function fetchAllForecastRates() {
+  const eligible = assets.filter(a =>
+    a.type !== 'cash' && a.type !== 'realestate' &&
+    !STABLECOIN_IDS.has((a.id||'').toLowerCase()) &&
+    !STABLECOIN_TICKERS.has((a.ticker||'').toUpperCase())
+  );
+  if (!eligible.length) return;
+
+  await Promise.allSettled(eligible.map(async a => {
+    try {
+      const live = await fetchHistoricalCAGR(a);
+      if (live) FC_LIVE_RATES[a.id] = live;
+    } catch(_) {}
+  }));
+
+  // Re-render forecast with live rates
+  if (typeof renderFcAssetScenarios === 'function') renderFcAssetScenarios();
+  if (typeof fcUpdate === 'function') fcUpdate();
+  // Refresh Premium simulation with live rates
+  if (typeof pmUpdate === 'function') { pmSelectedRates = {}; pmUpdate(); }
+}
 
 const FC_YRS = 3;
 let fcInitAmt = 30000, fcDCA = 0;
@@ -2920,6 +3119,24 @@ function renderFcAssetScenarios() {
   container.innerHTML = assets.map((a,i) => {
     const color = a.color || '#4f8ef7';
 
+    // Stablecoin — show flat rate info card
+    if (STABLECOIN_IDS.has((a.id||'').toLowerCase()) || STABLECOIN_TICKERS.has((a.ticker||'').toUpperCase())) {
+      return `
+      <div style="background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:12px 14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;background:${color}22;border:2px solid ${color}44;flex-shrink:0;">${a.icon}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:600;color:var(--tx);">${a.name}</div>
+            <div style="font-size:9px;color:var(--mu);font-family:var(--mono);">${a.ticker}</div>
+          </div>
+          <div style="font-size:9px;padding:2px 8px;border-radius:6px;background:rgba(52,211,153,0.1);color:#34d399;font-weight:700;font-family:var(--mono);">STABLECOIN</div>
+        </div>
+        <div style="background:var(--sur2);border-radius:8px;padding:8px 12px;font-size:12px;color:#34d399;font-weight:600;font-family:var(--mono);">
+          ≈ $1.00 · ${currentLang==='vi'?'Giá trị ổn định':'Stable value pegged to USD'}
+        </div>
+        <div style="font-size:10px;color:var(--mu);margin-top:6px;">${currentLang==='vi'?'Không tính tăng trưởng — stablecoin giữ giá trị USD.':'No growth simulated — stablecoin maintains USD peg.'}</div>
+      </div>`;
+    }
     // Cash special card
     if (a.type === 'cash') return `
       <div style="background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:12px 14px;">
@@ -3151,22 +3368,26 @@ function initForecast() {
   assets.forEach((_,i) => { if (!fcScenarios[i]) fcScenarios[i] = fcDefaultScenario(assets[i].type); });
   const initEl = $('fc-init'); if (initEl) initEl.value = fmtNum(fcInitAmt, 0);
   const dcaEl  = $('fc-dca');  if (dcaEl)  dcaEl.value  = fcDCA > 0 ? fmtNum(fcDCA, 0) : '0';
+  const dcaEl2 = $('fc-dca-field'); if (dcaEl2) dcaEl2.value = fcDCA > 0 ? fmtNum(fcDCA, 0) : '0';
   renderFcAssetScenarios();
   fcUpdate();
 }
 
 const hadSaved = loadSaved();
 if (!hadSaved) {
-  // defaults
   assets = [
-    { id:'VUAA.L',     name:'VUAA ETF',    ticker:'VUAA.L', icon:'📈', color:'#4f8ef7', type:'stock',  qty:0, price:null, pct:null, history:[] },
-    { id:'hyperliquid',name:'Hyperliquid', ticker:'HYPE',   icon:'⚡', color:'#8b6cf7', type:'crypto', qty:0, price:null, pct:null, history:[] },
-    { id:'pax-gold',   name:'PAX Gold',    ticker:'PAXG',   icon:'🪙', color:'#f5a623', type:'crypto', qty:0, price:null, pct:null, history:[] },
+    { id:'bitcoin',   name:'Bitcoin',    ticker:'BTC',    icon:'₿',  color:'#f7931a', type:'crypto',     qty:1,     price:null, pct:null, history:[] },
+    { id:'ethereum',  name:'Ethereum',   ticker:'ETH',    icon:'◆',  color:'#627eea', type:'crypto',     qty:100,   price:null, pct:null, history:[] },
+    { id:'NVDA',      name:'Nvidia',     ticker:'NVDA',   icon:'🟢', color:'#76b900', type:'stock',      qty:100,   price:null, pct:null, history:[] },
+    { id:'QQQ',       name:'Nasdaq ETF', ticker:'QQQ',    icon:'📊', color:'#4f8ef7', type:'stock',      qty:100,   price:null, pct:null, history:[] },
+    { id:'USOIL',    name:'Crude Oil WTI', ticker:'OIL',    icon:'🛢️', color:'#6b4f2a', type:'commodity',  qty:1000,  price:null, pct:null, history:[] },
+    { id:'XAGUSD',   name:'Silver',         ticker:'SILVER', icon:'🥈', color:'#c0c0c0', type:'commodity',  qty:1000,  price:null, pct:null, history:[] },
+    { id:'USD',       name:'Cash / Savings', ticker:'USD',   icon:'💵', color:'#34d399', type:'cash',       qty:20000, cashRate:5.5, currency:'USD' },
   ];
 }
 renderHoldings();
 recalc();
-loadAll().then(() => { initForecast(); applyLang(); initPremium(); });
+loadAll().then(() => { initForecast(); applyLang(); translateDefaultAssets(); initPremium(); setTimeout(fetchAllForecastRates, 2000); });
 
 // Re-render khi xoay màn hình
 window.addEventListener('resize', () => {
@@ -3685,10 +3906,12 @@ function unlockPremium() {
     window._pmInitFromPortfolio = total;
   }
 
-  // Pre-fill rates từ FC_ASSET_DATA hist làm default
+  // Pre-fill rates from live historical data → FC_ASSET_DATA fallback
   assets.forEach(a => {
     if (pmSelectedRates[a.ticker] === undefined) {
-      pmSelectedRates[a.ticker] = (FC_ASSET_DATA[a.type] || FC_ASSET_DATA.stock).histRate;
+      const stablecoin = STABLECOIN_IDS.has((a.id||'').toLowerCase()) || STABLECOIN_TICKERS.has((a.ticker||'').toUpperCase());
+      const liveRate = FC_LIVE_RATES[a.id]?.real ?? FC_LIVE_RATES[a.id]?.histRate;
+      pmSelectedRates[a.ticker] = stablecoin ? 0.01 : (liveRate ?? (FC_ASSET_DATA[a.type] || FC_ASSET_DATA.stock).histRate);
     }
   });
 
@@ -3797,10 +4020,42 @@ Rules:
       const assetObj = assets.find(a => a.ticker === item.ticker);
       const icon = assetObj ? assetObj.icon : (item.isNew ? '✨' : '💰');
       const color = assetObj ? assetObj.color : (item.color || cfg.badge);
-      const g = item.growth && item.growth.hist10 != null ? item.growth : (() => {
+      const g = (() => {
+        // Always prefer live historical data from FC_LIVE_RATES
+        const live = assetObj ? FC_LIVE_RATES[assetObj.id] : null;
+        const isStable = assetObj && (STABLECOIN_IDS.has((assetObj.id||'').toLowerCase()) || STABLECOIN_TICKERS.has((assetObj.ticker||'').toUpperCase()));
+        
+        if (isStable) {
+          return { hist_period:'stable', hist10: 0.1, realistic: 1.0, optimistic: 5.5, pessimistic: 0.0 };
+        }
+        
+        if (live) {
+          // Build label showing which periods we have data for
+          const periods = [];
+          if (live.cagr1  != null) periods.push(`1yr:${(live.cagr1*100).toFixed(1)}%`);
+          if (live.cagr3  != null) periods.push(`3yr:${(live.cagr3*100).toFixed(1)}%`);
+          if (live.cagr5  != null) periods.push(`5yr:${(live.cagr5*100).toFixed(1)}%`);
+          if (live.cagr10 != null) periods.push(`10yr:${(live.cagr10*100).toFixed(1)}%`);
+          return {
+            hist_period:  live.histPeriod || '5yr',
+            hist10:       Math.round((live.histRate || 0) * 1000) / 10,
+            realistic:    Math.round((live.real     || live.histRate || 0) * 1000) / 10,
+            optimistic:   Math.round((live.bull     || (live.histRate||0) * 1.6) * 1000) / 10,
+            pessimistic:  Math.round((live.bear     ?? -0.1) * 1000) / 10,
+            allPeriods:   periods,
+            cagr1:  live.cagr1  != null ? Math.round(live.cagr1*1000)/10  : null,
+            cagr3:  live.cagr3  != null ? Math.round(live.cagr3*1000)/10  : null,
+            cagr5:  live.cagr5  != null ? Math.round(live.cagr5*1000)/10  : null,
+            cagr10: live.cagr10 != null ? Math.round(live.cagr10*1000)/10 : null,
+            isLive: true,
+          };
+        }
+
+        // AI data or type fallback
+        if (item.growth && item.growth.hist10 != null) return item.growth;
         const fallbacks = {
           crypto:    { hist_period:'since launch', hist10:30, realistic:20, optimistic:80, pessimistic:-20 },
-          stock:     { hist_period:'5yr',          hist10:10, realistic:8,  optimistic:15, pessimistic:3   },
+          stock:     { hist_period:'10yr',         hist10:10, realistic:8,  optimistic:15, pessimistic:3   },
           commodity: { hist_period:'5yr',          hist10:5,  realistic:4,  optimistic:12, pessimistic:-2  },
           cash:      { hist_period:'1yr',          hist10:4,  realistic:4,  optimistic:5,  pessimistic:1   },
           realestate:{ hist_period:'5yr',          hist10:7,  realistic:6,  optimistic:12, pessimistic:0   },
@@ -3809,36 +4064,43 @@ Rules:
       })();
       const histPeriod = g.hist_period || '10yr';
       const histLabel = vi
-        ? (histPeriod === '10yr' ? 'TB 10 năm' : histPeriod === '5yr' ? 'TB 5 năm' : histPeriod === '3yr' ? 'TB 3 năm' : histPeriod === '1yr' ? 'TB 1 năm' : `TB ${histPeriod}`)
-        : `Avg ${histPeriod}`;
+        ? (histPeriod === '10yr' ? 'TB 10 năm' : histPeriod === '5yr' ? 'TB 5 năm' : histPeriod === '3yr' ? 'TB 3 năm' : histPeriod === '1yr' ? 'TB 1 năm' : histPeriod === 'stable' ? 'Stablecoin' : `TB ${histPeriod}`)
+        : (histPeriod === 'stable' ? 'Stablecoin' : `Avg ${histPeriod}`);
 
-      const growthChipsInner = g.hist10 != null ? `
-          <span class="growth-chip" data-ticker="${item.ticker}" data-rate="${g.hist10}" data-type="hist10"
+      // Pick best single historical period: 10yr > 5yr > 3yr > 1yr
+      const bestPeriodRate = g.isLive
+        ? (g.cagr10 ?? g.cagr5 ?? g.cagr3 ?? g.cagr1 ?? g.hist10)
+        : g.hist10;
+      const bestPeriodLabel = g.isLive
+        ? (g.cagr10 != null ? (vi?'TB 10 năm':'Avg 10yr') :
+           g.cagr5  != null ? (vi?'TB 5 năm' :'Avg 5yr')  :
+           g.cagr3  != null ? (vi?'TB 3 năm' :'Avg 3yr')  :
+                              (vi?'TB 1 năm' :'Avg 1yr'))
+        : histLabel;
+
+      const growthChipsInner = bestPeriodRate != null ? `
+          <span class="growth-chip" data-ticker="${item.ticker}" data-rate="${bestPeriodRate}" data-type="hist10"
             data-color="#e8eaf0"
             style="flex:1 1 calc(50% - 3px);text-align:center;padding:5px 4px;border-radius:6px;font-size:10px;font-weight:700;font-family:var(--mono);background:rgba(232,234,240,0.08);color:#e8eaf0;border:2px solid rgba(232,234,240,0.5);cursor:pointer;transition:all .15s;"
-            onclick="selectGrowthChip(this)"
-            title="${vi?`Trung bình lịch sử (${histPeriod})`:`Historical avg (${histPeriod})`}">
-            ${histLabel} ${g.hist10>=0?'+':''}${g.hist10?.toFixed(1)}%
+            onclick="selectGrowthChip(this)">
+            ${bestPeriodLabel} ${bestPeriodRate>=0?'+':''}${bestPeriodRate?.toFixed(1)}%
           </span>
           <span class="growth-chip" data-ticker="${item.ticker}" data-rate="${g.realistic}" data-type="realistic"
             data-color="#34d399"
             style="flex:1 1 calc(50% - 3px);text-align:center;padding:5px 4px;border-radius:6px;font-size:10px;font-weight:600;font-family:var(--mono);background:rgba(52,211,153,0.08);color:#34d399;border:1px solid rgba(52,211,153,0.25);cursor:pointer;transition:all .15s;"
-            onclick="selectGrowthChip(this)"
-            title="${vi?'Tăng trưởng khả thi':'Realistic growth'}">
+            onclick="selectGrowthChip(this)">
             ${vi?'Khả thi':'Real'} ${g.realistic>=0?'+':''}${g.realistic?.toFixed(1)}%
           </span>
           <span class="growth-chip" data-ticker="${item.ticker}" data-rate="${g.optimistic}" data-type="optimistic"
             data-color="#4f8ef7"
             style="flex:1 1 calc(50% - 3px);text-align:center;padding:5px 4px;border-radius:6px;font-size:10px;font-weight:600;font-family:var(--mono);background:rgba(79,142,247,0.08);color:#4f8ef7;border:1px solid rgba(79,142,247,0.25);cursor:pointer;transition:all .15s;"
-            onclick="selectGrowthChip(this)"
-            title="${vi?'Kịch bản lạc quan':'Optimistic / Bull case'}">
+            onclick="selectGrowthChip(this)">
             ${vi?'Lạc quan':'Bull'} ${g.optimistic>=0?'+':''}${g.optimistic?.toFixed(1)}%
           </span>
           <span class="growth-chip" data-ticker="${item.ticker}" data-rate="${g.pessimistic}" data-type="pessimistic"
             data-color="#f87171"
             style="flex:1 1 calc(50% - 3px);text-align:center;padding:5px 4px;border-radius:6px;font-size:10px;font-weight:600;font-family:var(--mono);background:rgba(248,113,113,0.08);color:#f87171;border:1px solid rgba(248,113,113,0.25);cursor:pointer;transition:all .15s;"
-            onclick="selectGrowthChip(this)"
-            title="${vi?'Kịch bản bi quan':'Pessimistic / Bear case'}">
+            onclick="selectGrowthChip(this)">
             ${vi?'Bi quan':'Bear'} ${g.pessimistic>=0?'+':''}${g.pessimistic?.toFixed(1)}%
           </span>` : '';
 
@@ -3924,11 +4186,11 @@ function pmUpdate() {
   assets.forEach(a => { totalByType[a.type] = (totalByType[a.type]||0) + 1; });
 
   const datasets = assets.map(a => {
-    // Priority: 1) user clicked chip, 2) AI alloc card hist rate, 3) FC_ASSET_DATA realistic
-    const defaultRate = (FC_ASSET_DATA[a.type] || FC_ASSET_DATA.stock).histRate;
-    const rate = pmSelectedRates[a.ticker] !== undefined
-      ? pmSelectedRates[a.ticker]
-      : defaultRate;
+    // Priority: 1) user clicked chip, 2) live historical rate, 3) FC_ASSET_DATA fallback
+    const liveRate = FC_LIVE_RATES[a.id]?.real ?? FC_LIVE_RATES[a.id]?.histRate;
+    const stablecoin = STABLECOIN_IDS.has((a.id||'').toLowerCase()) || STABLECOIN_TICKERS.has((a.ticker||'').toUpperCase());
+    const defaultRate = stablecoin ? 0.01 : (liveRate ?? (FC_ASSET_DATA[a.type] || FC_ASSET_DATA.stock).histRate);
+    const rate = pmSelectedRates[a.ticker] !== undefined ? pmSelectedRates[a.ticker] : defaultRate;
     const assetPct = (alloc[a.type]||20) / 100 / (totalByType[a.type]||1);
     let v = initAmt * assetPct;
     const series = [Math.round(v)];
