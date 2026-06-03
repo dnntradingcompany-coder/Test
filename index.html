@@ -1858,15 +1858,26 @@ async function fetchVNStock(symbol) {
     const res = d?.chart?.result?.[0];
     const price = res?.meta?.regularMarketPrice;
     if (!price) throw new Error('no price');
-    const prev = res?.meta?.previousClose || res?.meta?.chartPreviousClose;
+    const pct = res?.meta?.regularMarketChangePercent ?? null;
+    // True 24h from timestamps if available
+    const ts2 = res?.timestamp; const cl2 = res?.indicators?.quote?.[0]?.close;
+    let true24 = pct;
+    if (ts2?.length > 1 && cl2) {
+      const nowTs = Date.now()/1000, target = nowTs - 86400;
+      let bi = 0, bd = Infinity;
+      ts2.forEach((t,i) => { if (cl2[i]==null) return; const d=Math.abs(t-target); if(d<bd){bd=d;bi=i;} });
+      if (cl2[bi] > 0 && bd < 129600) true24 = (price - cl2[bi]) / cl2[bi] * 100;
+    }
+    return { price, pct: true24, history: cl2?.filter(Boolean)||[] };
+  // removed old prev calc
     return { price, pct: prev ? (price-prev)/prev*100 : null, history: res?.indicators?.quote?.[0]?.close?.filter(Boolean)||[] };
   };
 
   const cfProxy = url => CF_WORKER_URL ? `${CF_WORKER_URL}?url=${encodeURIComponent(url)}` : null;
 
   const stooqUrl  = `https://stooq.com/q/l/?s=${stooqSym}&f=sd2t2ohlcv&h&e=csv`;
-  const yahooUrl  = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=5d`;
-  const yahoo2Url = `https://query2.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=5d`;
+  const url1 = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1h&range=2d`;
+  const url2 = `https://query2.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1h&range=2d`;
 
   const mkProxies = u => [
     cfProxy(u),
@@ -1908,9 +1919,28 @@ async function fetchYahoo(symbol) {
       const res = d.chart.result[0];
       const price = res.meta?.regularMarketPrice;
       if (!price) return null;
-      const closes = res.indicators?.quote?.[0]?.close?.filter(Boolean) || [];
-      const prev = res.meta?.previousClose || res.meta?.chartPreviousClose;
-      return { price, pct: prev ? (price-prev)/prev*100 : null, history: closes };
+      const closes = res.indicators?.quote?.[0]?.close || [];
+      const timestamps = res.timestamp || [];
+      // Compute true 24h pct from hourly data if available
+      let pct = res.meta?.regularMarketChangePercent ?? null;
+      if (timestamps.length > 1) {
+        const nowTs = Date.now() / 1000;
+        const target = nowTs - 86400;
+        let bestIdx = 0, bestDiff = Infinity;
+        timestamps.forEach((t, i) => {
+          if (closes[i] == null) return;
+          const diff = Math.abs(t - target);
+          if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
+        });
+        const price24hAgo = closes[bestIdx];
+        // Use if within 36h (covers weekends/holidays) and price is valid
+        if (price24hAgo > 0 && bestDiff < 129600) {
+          pct = (price - price24hAgo) / price24hAgo * 100;
+        }
+      }
+      // Always fall back to regularMarketChangePercent if still null
+      if (pct == null) pct = res.meta?.regularMarketChangePercent ?? null;
+      return { price, pct, history: closes.filter(Boolean) };
     }
     if (d?.quoteResponse?.result?.[0]) {
       const q = d.quoteResponse.result[0];
@@ -1921,8 +1951,8 @@ async function fetchYahoo(symbol) {
   };
 
   const baseUrls = [
-    `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=10d`,
-    `https://query2.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=10d`,
+    `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1h&range=2d`,
+    `https://query2.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1h&range=2d`,
     `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`,
     `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`,
   ];
@@ -2132,8 +2162,8 @@ async function fetchCommodity(id) {
       const res = d?.chart?.result?.[0];
       const price = res?.meta?.regularMarketPrice;
       if (!price) throw new Error('no price');
-      const prev = res?.meta?.previousClose || res?.meta?.chartPreviousClose;
-      return { id, current_price: price, price_change_percentage_24h: prev ? (price-prev)/prev*100 : null };
+      const pct = res?.meta?.regularMarketChangePercent ?? null;
+      return { id, current_price: price, price_change_percentage_24h: pct };
     };
     const yUrl1 = `https://query1.finance.yahoo.com/v8/finance/chart/${yahooSym}?interval=1d&range=2d`;
     const yUrl2 = `https://query2.finance.yahoo.com/v8/finance/chart/${yahooSym}?interval=1d&range=2d`;
