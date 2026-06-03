@@ -11,6 +11,13 @@
 <meta name="author" content="WealthOS">
 <meta name="robots" content="index, follow">
 
+<!-- ── Favicons ── -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<meta name="theme-color" content="#0d0f14">
+
 <!-- ── SEO: Canonical URL ── -->
 <link rel="canonical" href="https://wealthos.world/">
 
@@ -117,6 +124,15 @@
   if (metaDesc && descs[lang]) metaDesc.setAttribute('content', descs[lang]);
 })();
 </script>
+<!-- Google tag (gtag.js) - Google Ads AW-16682803816 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-16682803816"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-16682803816');
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1880,7 +1896,8 @@ function fetchWithTimeout(url, opts={}) {
 
 // ── CLOUDFLARE WORKER PROXY ──────────────────────────────────────────
 // Deploy worker tại workers.cloudflare.com, paste URL vào đây:
-const CF_WORKER_URL = 'https://wealthos-proxy-worker.dnntradingcompany.workers.dev';
+const CF_WORKER_URL = 'https://proud-feather-b76c.dnntradingcompany.workers.dev';
+const APP_SECRET = 'WOS_2024_xK9mP3qR7nB'; // khớp với secret trong Cloudflare Worker
 // ─────────────────────────────────────────────────────────────────────
 
 const PROXIES = [
@@ -3722,7 +3739,7 @@ Answer in ${currentLang==='vi'?'Vietnamese':currentLang==='zh'?'Chinese':current
 
     const res = await fetch('https://proud-feather-b76c.dnntradingcompany.workers.dev/ai', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-App-Token': APP_SECRET },
       body: JSON.stringify({ messages }),
     });
     const data = await res.json();
@@ -3817,7 +3834,7 @@ Reply in ${lang}. Only comment on strengths and weaknesses of the current portfo
     const workerUrl = 'https://proud-feather-b76c.dnntradingcompany.workers.dev' + (isPremium ? '/ai' : '/');
     const response = await fetch(workerUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-App-Token': APP_SECRET },
       body: JSON.stringify({
         messages: [{ role: 'user', content: prompt }],
       }),
@@ -3925,7 +3942,7 @@ async function initPremium() {
   try {
     const res = await fetch('https://proud-feather-b76c.dnntradingcompany.workers.dev/verify', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-App-Token': APP_SECRET },
       body: JSON.stringify({ email, license_key: key }),
     });
     if (!res.ok) return; // server error → giữ unlock
@@ -3997,7 +4014,7 @@ async function verifyAndUnlock() {
     const workerUrl = 'https://proud-feather-b76c.dnntradingcompany.workers.dev/verify';
     const res = await fetch(workerUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-App-Token': APP_SECRET },
       body: JSON.stringify({ email, license_key: key }),
     });
     const data = await res.json();
@@ -4139,7 +4156,7 @@ Rules:
   try {
     const res = await fetch('https://proud-feather-b76c.dnntradingcompany.workers.dev/ai', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-App-Token': APP_SECRET },
       body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] }),
     });
     const data = await res.json();
